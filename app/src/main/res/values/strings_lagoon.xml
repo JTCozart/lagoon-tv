@@ -53,4 +53,13 @@
     <string name="lagoon_player_chapters">Chapters</string>
     <string name="lagoon_player_ends_at">Ends at %1$s</string>
     <string name="lagoon_player_normal_speed">Normal</string>
+    <string name="lagoon_update_eyebrow">Update</string>
+    <string name="lagoon_update_title">Lagoon %1$s is available</string>
+    <string name="lagoon_update_installed">You have version %1$s.</string>
+    <string name="lagoon_update_now">Update now</string>
+    <string name="lagoon_update_not_now">Not now</string>
+    <string name="lagoon_update_try_again">Try again</string>
+    <string name="lagoon_update_downloading">Downloading %1$d%%</string>
+    <string name="lagoon_update_failed">The update did not download correctly, so nothing was installed. Check the connection and try again.</string>
+    <string name="lagoon_update_permission">Allow Lagoon to install apps on the screen that opened, or under Settings, Apps, Security and restrictions, then choose Update now again.</string>
 </resources>

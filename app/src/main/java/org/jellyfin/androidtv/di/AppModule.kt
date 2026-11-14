@@ -78,6 +78,13 @@ import org.jellyfin.androidtv.ui.lagoon.library.LibraryLoader
 import org.jellyfin.androidtv.ui.lagoon.library.LibraryViewModel
 import org.jellyfin.androidtv.ui.lagoon.search.LagoonSearchViewModel
 import org.jellyfin.androidtv.ui.lagoon.home.ShelfLoader
+import org.jellyfin.androidtv.ui.lagoon.update.AppVersion
+import org.jellyfin.androidtv.ui.lagoon.update.GitHubUpdateSource
+import org.jellyfin.androidtv.ui.lagoon.update.SharedPreferencesUpdatePreferences
+import org.jellyfin.androidtv.ui.lagoon.update.UpdatePreferences
+import org.jellyfin.androidtv.ui.lagoon.update.UpdateSource
+import org.jellyfin.androidtv.ui.lagoon.update.UpdateViewModel
+import java.io.File
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.koin.android.ext.koin.androidContext
 import java.time.Clock
@@ -198,6 +205,19 @@ val appModule = module {
 	// Lagoon library screen
 	single<LibraryLoader> { JellyfinLibraryLoader(androidContext(), get()) }
 	viewModel { (library: BaseItemDto) -> LibraryViewModel(library, get(), get()) }
+
+	// Lagoon update check against the project's GitHub releases
+	single<UpdateSource> { GitHubUpdateSource(get<OkHttpFactory>().createClient(get<HttpClientOptions>())) }
+	single<UpdatePreferences> { SharedPreferencesUpdatePreferences(androidContext()) }
+	viewModel {
+		UpdateViewModel(
+			source = get(),
+			preferences = get(),
+			clock = Clock.systemDefaultZone(),
+			installedVersion = AppVersion.parse(BuildConfig.VERSION_NAME),
+			downloadFolder = File(androidContext().cacheDir, "updates"),
+		)
+	}
 
 	single { BackgroundService(get(), get(), get(), get(), get()) }
 

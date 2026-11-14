@@ -56,6 +56,10 @@ You need a Jellyfin server and a Google TV or Android TV device running Android 
    `https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk`
 3. Open Lagoon, enter your server address, and sign in or use Quick Connect.
 
+Lagoon checks GitHub for a newer stable release when the home screen opens, at most every 12 hours. If there is
+one it offers to download it, checks it against the published `SHA256SUMS`, and hands it to Android's installer. Choose
+"Not now" and that version is not offered again. Development builds never check.
+
 The [install guide](https://jtcozart.github.io/lagoon-tv/install.html) covers every method step by step, including
 Fire TV, updating and checking the download.
 

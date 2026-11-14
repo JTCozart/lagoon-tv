@@ -1,0 +1,12 @@
+package org.jellyfin.androidtv.ui.lagoon.update
+
+import java.io.File
+
+/** Where an update stands, from nothing to offer to an APK ready for the installer. */
+sealed interface UpdateState {
+	data object Hidden : UpdateState
+	data class Offered(val release: ReleaseInfo) : UpdateState
+	data class Downloading(val release: ReleaseInfo, val progress: Float) : UpdateState
+	data class ReadyToInstall(val release: ReleaseInfo, val apk: File) : UpdateState
+	data class Failed(val release: ReleaseInfo) : UpdateState
+}
