@@ -80,6 +80,7 @@ import org.jellyfin.androidtv.ui.lagoon.search.LagoonSearchViewModel
 import org.jellyfin.androidtv.ui.lagoon.home.ShelfLoader
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.koin.android.ext.koin.androidContext
+import java.time.Clock
 import java.util.UUID
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -183,7 +184,7 @@ val appModule = module {
 	viewModel { SettingsLibrariesScreenViewModel(get()) }
 
 	// Lagoon home screen
-	single<ShelfLoader> { JellyfinShelfLoader(androidContext(), get(), get()) }
+	single<ShelfLoader> { JellyfinShelfLoader(androidContext(), get(), get(), Clock.systemDefaultZone()) }
 	single { PlayTargetResolver(get()) }
 	viewModel { HomeViewModel(get(), get(), get(), get()) }
 

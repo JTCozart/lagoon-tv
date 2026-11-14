@@ -20,30 +20,11 @@ import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import timber.log.Timber
 
-enum class LibraryMode { Browse, AllTitles }
-
-data class LibraryUiState(
-	val mode: LibraryMode = LibraryMode.Browse,
-	val isLoading: Boolean = true,
-	val libraries: List<BaseItemDto> = emptyList(),
-	val featured: List<BaseItemDto> = emptyList(),
-	val shelves: List<Shelf> = emptyList(),
-	val sort: LibrarySort = LibrarySort.RecentlyAdded,
-	val unwatchedOnly: Boolean = false,
-	val titles: List<BaseItemDto> = emptyList(),
-	val totalTitles: Int = 0,
-	val isLoadingTitles: Boolean = false,
-)
-
 class LibraryViewModel(
 	val library: BaseItemDto,
 	private val loader: LibraryLoader,
 	private val userViewsRepository: UserViewsRepository,
 ) : ViewModel(), FocusMemory {
-	private companion object {
-		const val LoadMoreThreshold = 24
-	}
-
 	private val _state = MutableStateFlow(LibraryUiState())
 	val state: StateFlow<LibraryUiState> = _state.asStateFlow()
 
@@ -86,8 +67,7 @@ class LibraryViewModel(
 	fun onTitleFocused(index: Int) {
 		lastGridFocus = index
 		val current = _state.value
-		val hasMore = current.titles.size < current.totalTitles
-		if (hasMore && !current.isLoadingTitles && index >= current.titles.size - LoadMoreThreshold) loadNextPage()
+		if (TitlePaging.shouldLoadMore(index, current.titles.size, current.totalTitles, current.isLoadingTitles)) loadNextPage()
 	}
 
 	private fun reloadTitles() {

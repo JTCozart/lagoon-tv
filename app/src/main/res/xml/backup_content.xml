@@ -6,6 +6,7 @@
         path="authentication_store.json" />
 
     <!-- UserPreferences -->
+    <!-- Lagoon: preference files follow the Lagoon application id -->
     <include
         domain="sharedpref"
         path="com.jtcozart.lagoon_preferences" />

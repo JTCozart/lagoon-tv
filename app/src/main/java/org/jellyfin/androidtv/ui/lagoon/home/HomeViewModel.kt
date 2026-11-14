@@ -20,15 +20,7 @@ import org.jellyfin.androidtv.ui.lagoon.browse.FocusMemory
 import org.jellyfin.androidtv.ui.lagoon.browse.Shelf
 import org.jellyfin.androidtv.ui.lagoon.browse.ShelfCardStyle
 import org.jellyfin.sdk.api.client.exception.ApiClientException
-import org.jellyfin.sdk.model.api.BaseItemDto
 import timber.log.Timber
-
-data class HomeUiState(
-	val isLoading: Boolean = true,
-	val featured: List<BaseItemDto> = emptyList(),
-	val shelves: List<Shelf> = emptyList(),
-	val libraries: List<BaseItemDto> = emptyList(),
-)
 
 class HomeViewModel(
 	private val userViewsRepository: UserViewsRepository,

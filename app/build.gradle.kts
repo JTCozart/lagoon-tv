@@ -1,3 +1,4 @@
+// Lagoon: its own application id, so it installs beside the official Jellyfin app
 val LagoonApplicationId = "com.jtcozart.lagoon"
 
 plugins {
@@ -15,7 +16,7 @@ android {
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
 
-		// Own application id so Lagoon installs beside the official Jellyfin app
+		// Lagoon: see LagoonApplicationId
 		applicationId = LagoonApplicationId
 		versionName = project.getVersionName()
 		versionCode = getVersionCode(versionName!!)

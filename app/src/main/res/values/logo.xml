@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Lagoon: logo colours follow the Lagoon palette -->
     <color name="logo_gradient_start">#2DD4BF</color>
     <color name="logo_gradient_stop">#3B82F6</color>
     <color name="logo_background">#060B12</color>

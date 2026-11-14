@@ -1,4 +1,5 @@
 <resources>
+    <!-- Lagoon: these upstream colours are retinted to the navy and teal palette; the names are kept so every screen picks it up -->
     <!-- Base Colors -->
     <color name="jellyfin_blue">#2DD4BF</color>
     <color name="jellyfin_purple">#3B82F6</color>

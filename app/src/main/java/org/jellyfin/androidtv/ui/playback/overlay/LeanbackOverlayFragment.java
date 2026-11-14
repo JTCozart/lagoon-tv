@@ -21,6 +21,7 @@ import coil3.ImageLoader;
 import kotlin.Lazy;
 import timber.log.Timber;
 
+// Lagoon: implements PlayerControlsOverlay so the player can use Lagoon's controls instead; this one stays for Live TV
 public class LeanbackOverlayFragment extends PlaybackSupportFragment implements PlayerControlsOverlay {
     private CustomPlaybackTransportControlGlue playerGlue;
     private VideoPlayerAdapter playerAdapter;

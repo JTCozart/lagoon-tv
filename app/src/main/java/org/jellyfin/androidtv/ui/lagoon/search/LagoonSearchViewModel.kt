@@ -19,24 +19,10 @@ import org.jellyfin.androidtv.ui.search.SearchRepository
 import org.jellyfin.sdk.api.client.ApiClient
 import org.jellyfin.sdk.api.client.exception.ApiClientException
 import org.jellyfin.sdk.api.client.extensions.userLibraryApi
-import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-
-data class SearchUiState(
-	val query: String = "",
-	val isSearching: Boolean = false,
-	/** The query the results below belong to; lags [query] while a search is in flight. */
-	val searchedQuery: String = "",
-	val titles: List<BaseItemDto> = emptyList(),
-	val episodes: List<BaseItemDto> = emptyList(),
-	val suggestions: List<BaseItemDto> = emptyList(),
-	val libraries: List<BaseItemDto> = emptyList(),
-) {
-	val hasResults get() = titles.isNotEmpty() || episodes.isNotEmpty()
-}
 
 class LagoonSearchViewModel(
 	private val searchRepository: SearchRepository,

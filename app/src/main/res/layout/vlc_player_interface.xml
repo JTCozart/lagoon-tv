@@ -31,6 +31,7 @@
             android:layout_height="match_parent"
             app:use_controller="false" />
 
+        <!-- Lagoon: filled in code with Lagoon's controls, or the leanback overlay for Live TV -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/leanback_fragment"
             android:layout_width="match_parent"

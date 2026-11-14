@@ -1,12 +1,10 @@
 package org.jellyfin.androidtv.ui.lagoon.player
 
-import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -29,16 +27,6 @@ import kotlin.time.Duration.Companion.seconds
 
 private val AutoHideDelay = 5.seconds
 private val SettleBeforeRefresh = 400.milliseconds
-
-private val BackKeys = setOf(KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_BUTTON_B, KeyEvent.KEYCODE_ESCAPE)
-private val ScrubKeys = setOf(KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_RIGHT)
-private val ShowKeys = setOf(
-	KeyEvent.KEYCODE_DPAD_UP,
-	KeyEvent.KEYCODE_DPAD_DOWN,
-	KeyEvent.KEYCODE_DPAD_CENTER,
-	KeyEvent.KEYCODE_ENTER,
-	KeyEvent.KEYCODE_MENU,
-)
 
 /**
  * Lagoon's player controls, standing in for upstream's leanback overlay over the same playback engine.
@@ -103,47 +91,48 @@ class LagoonPlayerOverlayFragment : Fragment(), PlayerControlsOverlay {
 	private fun handleKey(event: KeyEvent): Boolean {
 		val keyCode = event.keyCode
 		val isDown = event.action == KeyEvent.ACTION_DOWN
-		val isVisible = state.isVisible.value
 
 		// The controller turns the overlay off when playback starts and upstream's key listener turns it back on
-		// with any key press. The scrub below runs before that listener, so it applies the same rule first.
+		// with any key press. Lagoon's routing runs before that listener, so it applies the same rule first.
 		if (isDown) shouldShowOverlay = true
 
-		if (isVisible && keyCode in BackKeys) {
-			if (isDown) {
-				if (state.panel.value != null) state.closePanel() else hideControls()
-			}
-			return true
+		when (val route = PlayerKeyRouter.beforePlayer(keyCode, keyContext())) {
+			KeyRoute.ClosePanel -> if (isDown) state.closePanel()
+			KeyRoute.HideControls -> if (isDown) hideControls()
+			is KeyRoute.Scrub -> if (isDown) scrub(route.direction, event.repeatCount)
+			else -> return askPlayerThenControls(keyCode, event, isDown)
 		}
+		return true
+	}
 
-		// Left and Right while hidden start a scrub straight away, as on large streaming apps. Once a scrub is under
-		// way the keys keep moving it here, so quick presses count even before the seek bar has taken focus.
-		val isScrubbing = state.scrubTargetMs.value != null
-		val canStartScrub = !isVisible && state.snapshot.value.canSeek && shouldShowOverlay
-		if (keyCode in ScrubKeys && (canStartScrub || (isVisible && isScrubbing && state.panel.value == null))) {
-			if (isDown) {
-				if (!isVisible) showControls(ControlsEntry.SeekBar)
-				val snapshot = state.snapshot.value
-				val from = state.scrubTargetMs.value ?: snapshot.positionMs
-				val direction = if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) 1 else -1
-				state.scrubTo(ScrubStepper.move(from, direction, event.repeatCount, snapshot.durationMs))
-			}
-			return true
-		}
-
-		// The player's own handling comes first: skip intro, media keys, Back to exit, stop
+	private fun askPlayerThenControls(keyCode: Int, event: KeyEvent, isDown: Boolean): Boolean {
 		if (keyInterceptListener?.onKey(keyLayout, keyCode, event) == true) {
 			refresh()
 			return true
 		}
 
-		if (!isVisible && keyCode in ShowKeys) {
+		if (PlayerKeyRouter.afterPlayerDeclined(keyCode, keyContext()) == KeyRoute.ShowControls) {
 			if (isDown) showControls(ControlsEntry.PlayButton)
 			return true
 		}
 
-		if (isVisible) state.touch()
+		if (state.isVisible.value) state.touch()
 		return false
+	}
+
+	private fun keyContext() = OverlayKeyContext(
+		isVisible = state.isVisible.value,
+		isPanelOpen = state.panel.value != null,
+		isScrubbing = state.scrubTargetMs.value != null,
+		canSeek = state.snapshot.value.canSeek,
+		canShowControls = shouldShowOverlay,
+	)
+
+	private fun scrub(direction: Int, repeat: Int) {
+		if (!state.isVisible.value) showControls(ControlsEntry.SeekBar)
+		val snapshot = state.snapshot.value
+		val from = state.scrubTargetMs.value ?: snapshot.positionMs
+		state.scrubTo(ScrubStepper.move(from, direction, repeat, snapshot.durationMs))
 	}
 
 	private fun showControls(entry: ControlsEntry) {
@@ -172,8 +161,7 @@ class LagoonPlayerOverlayFragment : Fragment(), PlayerControlsOverlay {
 		val wasPaused = state.snapshot.value.isPaused
 		state.publish(snapshot)
 
-		// Pausing brings the controls up, so the viewer sees where they are
-		if (snapshot.isPaused && !wasPaused && !state.isVisible.value) showControls(ControlsEntry.PlayButton)
+		if (ControlsOnPause.shouldShow(wasPaused, snapshot.isPaused, state.isVisible.value)) showControls(ControlsEntry.PlayButton)
 	}
 
 	private fun refreshSoon() {
@@ -206,12 +194,4 @@ class LagoonPlayerOverlayFragment : Fragment(), PlayerControlsOverlay {
 	// The controls run their own auto-hide timer, and the seek bar handles Left and Right itself
 	override fun setFading(fadingEnabled: Boolean) = Unit
 	override fun onSeekKey() = Unit
-}
-
-/** Sees every key before the views inside it, so the player can act on keys whatever has focus. */
-private class KeyInterceptLayout(
-	context: Context,
-	private val onKey: (KeyEvent) -> Boolean,
-) : FrameLayout(context) {
-	override fun dispatchKeyEvent(event: KeyEvent): Boolean = onKey(event) || super.dispatchKeyEvent(event)
 }

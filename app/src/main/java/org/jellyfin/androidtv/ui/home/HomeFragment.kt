@@ -38,6 +38,7 @@ import kotlin.time.Duration.Companion.seconds
 
 private val ServerChangeDebounce = 2.seconds
 
+/** Lagoon: hosts the redesigned home screen; the leanback rows upstream used here are no longer shown. */
 class HomeFragment : Fragment() {
 	private val sessionRepository by inject<SessionRepository>()
 	private val serverRepository by inject<ServerRepository>()

@@ -5,11 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-enum class PlayerPanel { AudioAndSubtitles, Speed, Quality, Zoom, Chapters }
-
-/** Which control should take focus when the controls appear. */
-enum class ControlsEntry { PlayButton, SeekBar }
-
 /**
  * The overlay's own state: whether the controls are up, which panel is open and where a scrub is heading.
  * The video's state lives in [PlayerSnapshot].

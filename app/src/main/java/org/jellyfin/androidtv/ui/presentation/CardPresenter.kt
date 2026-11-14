@@ -277,6 +277,7 @@ private fun BaseRowItem.getDisplayConfig(imageType: ImageType, uniformAspect: Bo
 	)
 }
 
+// Lagoon: cards on the remaining leanback screens show focus with the same accent ring as the new screens
 private val FocusRingWidth = 3.dp
 
 @Composable

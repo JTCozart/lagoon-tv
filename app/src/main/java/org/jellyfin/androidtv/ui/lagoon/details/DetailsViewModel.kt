@@ -11,29 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jellyfin.androidtv.data.repository.ItemMutationRepository
 import org.jellyfin.sdk.api.client.exception.ApiClientException
-import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
-import org.jellyfin.sdk.model.api.BaseItemPerson
 import timber.log.Timber
 import java.util.UUID
-
-data class DetailsUiState(
-	val isLoading: Boolean = true,
-	val hasFailed: Boolean = false,
-	/** The movie or series the page is about. An episode opens its series' page. */
-	val title: BaseItemDto? = null,
-	val playPlan: PlayPlan? = null,
-	val badges: List<String> = emptyList(),
-	val isFavorite: Boolean = false,
-	val isPlayed: Boolean = false,
-	val seasons: List<BaseItemDto> = emptyList(),
-	val selectedSeasonId: UUID? = null,
-	val episodes: List<BaseItemDto> = emptyList(),
-	/** The episode to put focus on when the episode row first appears. */
-	val highlightedEpisodeId: UUID? = null,
-	val cast: List<BaseItemPerson> = emptyList(),
-	val similar: List<BaseItemDto> = emptyList(),
-)
 
 class DetailsViewModel(
 	private val itemId: UUID,
@@ -91,10 +71,8 @@ class DetailsViewModel(
 
 	private suspend fun load() {
 		val opened = loader.item(itemId)
-		val title = when (opened.type) {
-			BaseItemKind.EPISODE, BaseItemKind.SEASON -> opened.seriesId?.let { loader.item(it) } ?: opened
-			else -> opened
-		}
+		val titleId = SeriesPageEntry.titleIdOf(opened)
+		val title = if (titleId == opened.id) opened else loader.item(titleId)
 		val isSeries = title.type == BaseItemKind.SERIES
 
 		viewModelScope.launch {
@@ -118,14 +96,12 @@ class DetailsViewModel(
 		}
 
 		val seasons = viewModelScope.async { orEmpty { loader.seasons(title.id) } }
-		val nextEpisode = if (opened.type == BaseItemKind.EPISODE) opened else orNull { loader.nextEpisode(title.id) }
+		val nextUp = if (opened.type == BaseItemKind.EPISODE) null else orNull { loader.nextEpisode(title.id) }
+		val startingEpisode = SeriesPageEntry.startingEpisode(opened, nextUp)
 		val seasonList = seasons.await()
-		val seasonId = when (opened.type) {
-			BaseItemKind.SEASON -> opened.id
-			else -> nextEpisode?.seasonId ?: _state.value.selectedSeasonId ?: seasonList.firstOrNull()?.id
-		}
+		val seasonId = SeriesPageEntry.seasonToShow(opened, startingEpisode, seasonList, _state.value.selectedSeasonId)
 		val episodes = seasonId?.let { orEmpty { loader.episodes(title.id, it) } }.orEmpty()
-		val playTarget = nextEpisode ?: episodes.firstOrNull()
+		val playTarget = SeriesPageEntry.playTarget(startingEpisode, episodes)
 
 		_state.update {
 			it.copy(

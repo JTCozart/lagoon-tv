@@ -6,8 +6,6 @@ import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.ChapterInfo
 import org.jellyfin.sdk.model.api.MediaStreamType
 
-data class TrackOption(val index: Int, val label: String)
-
 /**
  * Everything the player controls show, read from upstream's playback controller in one go so Compose
  * redraws from a single consistent value.
