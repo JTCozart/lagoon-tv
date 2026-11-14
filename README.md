@@ -83,4 +83,4 @@ Lagoon is a modified version of Jellyfin for Android TV, copyright the Jellyfin 
 the [GNU General Public License, version 2](LICENSE). It is an independent project, not affiliated with or endorsed
 by the Jellyfin project. Third-party components and their licenses are listed in [NOTICES.md](NOTICES.md).
 
-Made by Jake Cozart at [Cozart Consulting](https://cozartconsulting.com).
+Copyright 2026 [Cozart Consulting](https://cozartconsulting.com). Lagoon is distributed under the GPL-2.0.
