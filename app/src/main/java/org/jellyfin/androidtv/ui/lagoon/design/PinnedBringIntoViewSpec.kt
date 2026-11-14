@@ -8,6 +8,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import kotlin.math.abs
+
+private val PinDeadZone = 14.dp
 
 /**
  * Scrolls a list so the focused child always lands at the same spot near the leading edge, the way
@@ -16,13 +20,18 @@ import androidx.compose.ui.unit.Dp
  * With [pinVisibleChildren] off, a child that is already fully on screen does not move the list.
  */
 @OptIn(ExperimentalFoundationApi::class)
-private class PinnedBringIntoViewSpec(
+internal class PinnedBringIntoViewSpec(
 	private val leadingEdgePx: Float,
 	private val pinVisibleChildren: Boolean,
+	private val deadZonePx: Float,
 ) : BringIntoViewSpec {
 	override fun calculateScrollDistance(offset: Float, size: Float, containerSize: Float): Float {
 		val isFullyVisible = offset >= 0f && offset + size <= containerSize
-		return if (isFullyVisible && !pinVisibleChildren) 0f else offset - leadingEdgePx
+		if (isFullyVisible && !pinVisibleChildren) return 0f
+
+		val distance = offset - leadingEdgePx
+		// A focused card grows, which moves its bounds a few pixels; chasing that makes the list twitch on every move
+		return if (isFullyVisible && abs(distance) < deadZonePx) 0f else distance
 	}
 }
 
@@ -34,6 +43,9 @@ fun PinFocusedChild(
 	content: @Composable () -> Unit,
 ) {
 	val leadingEdgePx = with(LocalDensity.current) { leadingEdge.toPx() }
-	val spec = remember(leadingEdgePx, pinVisibleChildren) { PinnedBringIntoViewSpec(leadingEdgePx, pinVisibleChildren) }
+	val deadZonePx = with(LocalDensity.current) { PinDeadZone.toPx() }
+	val spec = remember(leadingEdgePx, pinVisibleChildren, deadZonePx) {
+		PinnedBringIntoViewSpec(leadingEdgePx, pinVisibleChildren, deadZonePx)
+	}
 	CompositionLocalProvider(LocalBringIntoViewSpec provides spec, content = content)
 }
