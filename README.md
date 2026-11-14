@@ -1,77 +1,86 @@
-<h1 align="center">Jellyfin for Android TV</h1>
-<h3 align="center">Part of the <a href="https://jellyfin.org">Jellyfin Project</a></h3>
-
----
-
 <p align="center">
-<img alt="Logo banner" src="https://raw.githubusercontent.com/jellyfin/jellyfin-ux/master/branding/SVG/banner-logo-solid.svg?sanitize=true"/>
-<br/><br/>
-<a href="https://github.com/jellyfin/jellyfin-androidtv">
-<img alt="GPL 2.0 License" src="https://img.shields.io/github/license/jellyfin/jellyfin-androidtv.svg"/>
-</a>
-<a href="https://github.com/jellyfin/jellyfin-androidtv/releases">
-<img alt="Current Release" src="https://img.shields.io/github/release/jellyfin/jellyfin-androidtv.svg"/>
-</a>
-<a href="https://translate.jellyfin.org/projects/jellyfin-android/jellyfin-androidtv/">
-<img alt="Translation Status" src="https://translate.jellyfin.org/widgets/jellyfin-android/-/jellyfin-androidtv/svg-badge.svg"/>
-</a>
-<br/>
-<a href="https://opencollective.com/jellyfin">
-<img alt="Donate" src="https://img.shields.io/opencollective/all/jellyfin.svg?label=backers"/>
-</a>
-<a href="https://features.jellyfin.org">
-<img alt="Feature Requests" src="https://img.shields.io/badge/fider-vote%20on%20features-success.svg"/>
-</a>
-<a href="https://matrix.to/#/+jellyfin:matrix.org">
-<img alt="Chat on Matrix" src="https://img.shields.io/matrix/jellyfin:matrix.org.svg?logo=matrix"/>
-</a>
-<br/>
-<a href="https://play.google.com/store/apps/details?id=org.jellyfin.androidtv">
-<img width="153" alt="Jellyfin on Google Play" src="https://jellyfin.org/images/store-icons/google-play.png"/>
-</a>
-<a href="https://www.amazon.com/gp/aw/d/B07TX7Z725">
-<img width="153" alt="Jellyfin on Amazon Appstore" src="https://jellyfin.org/images/store-icons/amazon.png"/>
-</a>
-<a href="https://f-droid.org/en/packages/org.jellyfin.androidtv/">
-<img width="153" alt="Jellyfin on F-Droid" src="https://jellyfin.org/images/store-icons/fdroid.png"/>
-</a>
-<br/>
-<a href="https://repo.jellyfin.org/releases/client/androidtv/">Download archive</a>
+  <img src="docs/favicon.svg" width="96" height="96" alt="Lagoon logo" />
 </p>
 
-Jellyfin for Android TV is a Jellyfin client for Android TV, Nvidia Shield, and Amazon Fire TV devices. We welcome all contributions and pull
-requests! If you have a larger feature in mind please open an issue so we can discuss the implementation before you start. 
+<h1 align="center">Lagoon</h1>
 
-## Building
+<p align="center">
+  <strong>Your Jellyfin library, the way streaming should feel.</strong><br/>
+  A free, open source Jellyfin app for Google TV and Android TV with a Netflix and Plex style interface.
+</p>
 
-The app uses Gradle and requires the Android SDK. We recommend using Android Studio, which includes all required dependencies, for
-development and building. For manual building without Android Studio make sure a compatible JDK and Android SDK are installed and in your
-PATH, then use the Gradle wrapper (`./gradlew`) to build the project with the `assembleDebug` Gradle task to generate an apk file:
+<p align="center">
+  <a href="https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk"><strong>Download the APK</strong></a>
+  &middot;
+  <a href="https://jtcozart.github.io/lagoon-tv/install.html">Install guide</a>
+  &middot;
+  <a href="https://jtcozart.github.io/lagoon-tv/">Website</a>
+</p>
 
-```shell
+<p align="center">
+  <img src="docs/screenshots/home.webp" width="900" alt="Lagoon home screen with a featured film and a Continue watching row" />
+</p>
+
+## What it is
+
+Lagoon is a redesigned interface for the open source
+[Jellyfin for Android TV](https://github.com/jellyfin/jellyfin-androidtv) app. It keeps that app's proven playback
+engine, server support, sign-in and settings, and replaces the screens you use every day:
+
+- **Home:** a navigation rail, a rotating billboard with Play and More info, and rows for Continue watching, Next up
+  and new arrivals that follow your Jellyfin home settings.
+- **Libraries:** a Browse view with top rated and genre rows, and an All titles poster wall with sorting and an
+  unwatched filter.
+- **Details:** artwork, logo, 4K, HDR and surround badges, cast, seasons and episodes, more like this, and a Play
+  button that knows whether to resume or which episode is next.
+- **Search:** a remote-friendly keyboard and voice search, with the best match first and episodes below.
+- **Player controls:** scrub with left and right, see when the title ends, and change audio, subtitles, speed,
+  quality, picture size or chapter from side panels.
+
+Lagoon installs beside the official Jellyfin app, so you can keep both.
+
+## Screenshots
+
+| | |
+| --- | --- |
+| ![A movie library with genre rows](docs/screenshots/library-browse.webp) | ![A poster grid of every title](docs/screenshots/library-all-titles.webp) |
+| ![A movie details page](docs/screenshots/details-movie.webp) | ![A series details page with episodes](docs/screenshots/details-episodes.webp) |
+| ![Search with an on-screen keyboard](docs/screenshots/search.webp) | ![Player controls over a playing episode](docs/screenshots/player.webp) |
+
+## Install
+
+You need a Jellyfin server and a Google TV or Android TV device running Android 6.0 or newer.
+
+1. Allow installing apps from unknown sources on the TV.
+2. Get the APK onto the TV with the Downloader app, by sending it from your phone, or with ADB:
+   `https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk`
+3. Open Lagoon, enter your server address, and sign in or use Quick Connect.
+
+The [install guide](https://jtcozart.github.io/lagoon-tv/install.html) covers every method step by step, including
+Fire TV, updating and checking the download.
+
+## Build it yourself
+
+```bash
+git clone https://github.com/JTCozart/lagoon-tv.git
+cd lagoon-tv
+./gradlew test
 ./gradlew assembleDebug
+adb install -r app/build/outputs/apk/debug/*.apk
 ```
 
-The task will create an APK file in the `/app/build/outputs/apk/debug` directory. This APK file uses a different app-id from our stable
-builds and can be manually installed to your device.
+You need JDK 21 and the Android SDK. Releases are built by GitHub Actions when a version tag is pushed; see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Branching
+## Contributing
 
-The `master` branch is the primary development branch and the target for all pull requests. It is **unstable** and may contain breaking
-changes or unresolved bugs. For production deployments and forks, always use the latest `release-x.y.z` branch. Do not base production work
-or long-lived forks on `master`.
+Bug reports, ideas and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first: it covers
+where new code goes, the test-first workflow, the code style and how releases work.
 
-Release branches are created at the start of a beta cycle and are kept up to date with each published release. Maintainers will cherry-pick
-selected changes into release branches as needed for backports. These branches are reused for subsequent patch releases.
+## License and credits
 
-## Translating
+Lagoon is a modified version of Jellyfin for Android TV, copyright the Jellyfin contributors, and is licensed under
+the [GNU General Public License, version 2](LICENSE). It is an independent project, not affiliated with or endorsed
+by the Jellyfin project. Third-party components and their licenses are listed in [NOTICES.md](NOTICES.md).
 
-Translations can be improved very easily from our [Weblate](https://translate.jellyfin.org/projects/jellyfin-android/jellyfin-androidtv)
-instance. Look through the following graphic to see if your native language could use some work! We cannot accept changes to translation
-files via pull requests.
-
-<p align="center">
-<a href="https://translate.jellyfin.org/engage/jellyfin-android/">
-<img alt="Detailed Translation Status" src="https://translate.jellyfin.org/widgets/jellyfin-android/-/jellyfin-androidtv/multi-auto.svg"/>
-</a>
-</p>
+Made by Jake Cozart at [Cozart Consulting](https://cozartconsulting.com).

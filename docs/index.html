@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lagoon | A Netflix-style Jellyfin app for Google TV and Android TV</title>
+  <meta name="description" content="Lagoon is a free, open source Jellyfin client for Google TV and Android TV with a streaming-style home screen, rich details pages, fast search and remote-friendly player controls." />
+  <link rel="canonical" href="https://jtcozart.github.io/lagoon-tv/" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#060b12" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://jtcozart.github.io/lagoon-tv/" />
+  <meta property="og:title" content="Lagoon | Jellyfin, the way streaming should feel" />
+  <meta property="og:description" content="A free, open source Jellyfin app for Google TV and Android TV with a Netflix and Plex style interface." />
+  <meta property="og:image" content="https://jtcozart.github.io/lagoon-tv/screenshots/home.webp" />
+  <meta property="og:site_name" content="Lagoon" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Lagoon",
+    "operatingSystem": "Android TV, Google TV",
+    "applicationCategory": "MultimediaApplication",
+    "description": "A Netflix and Plex style Jellyfin client for Google TV and Android TV.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "downloadUrl": "https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk",
+    "license": "https://github.com/JTCozart/lagoon-tv/blob/master/LICENSE",
+    "author": { "@type": "Person", "name": "Jake Cozart", "url": "https://github.com/JTCozart" }
+  }
+  </script>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Lagoon home">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <defs><linearGradient id="nav-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs>
+        <circle cx="32" cy="32" r="24" fill="none" stroke="url(#nav-g)" stroke-width="6"/>
+        <path d="M26 20 L46 32 L26 44 Z" fill="url(#nav-g)"/>
+      </svg>
+      Lagoon
+    </a>
+    <div class="links">
+      <a class="optional" href="#features">Features</a>
+      <a class="optional" href="#screenshots">Screenshots</a>
+      <a href="install.html">Install</a>
+      <a class="optional" href="https://github.com/JTCozart/lagoon-tv" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="btn btn-primary btn-small" href="https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk">Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">For Jellyfin on Google TV and Android TV</div>
+    <h1>Your Jellyfin library, <span>the way streaming should feel.</span></h1>
+    <p class="lead">
+      Lagoon is a free, open source TV app for your own Jellyfin server. It brings a streaming-style home screen,
+      rich details pages, quick search and simple player controls to the shows and movies you already own.
+    </p>
+    <div class="actions">
+      <a class="btn btn-primary" href="https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+        Download the APK
+      </a>
+      <a class="btn btn-ghost" href="install.html">How to install it</a>
+    </div>
+    <p class="fine">Free and open source under the GPL-2.0. Needs a Jellyfin server. Android TV 6.0 or newer.</p>
+
+    <div class="tv">
+      <img src="screenshots/home.webp" width="1600" height="900"
+           alt="Lagoon home screen: a featured film with Play and More info buttons above a Continue watching row" />
+    </div>
+  </div>
+</header>
+
+<section id="features" class="alt">
+  <div class="wrap">
+    <h2>Everything feels made for the couch</h2>
+    <p class="intro">Lagoon replaces the screens you use every day with a design built for a TV remote, while the proven
+      Jellyfin engine underneath keeps streaming, transcoding and watch progress working the way they always have.</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/></svg></div>
+        <h3>A home screen that sells the show</h3>
+        <p>A rotating billboard with big artwork and logos, then Continue watching, Next up and new arrivals in rows that keep your place.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="9" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/><rect x="14" y="15" width="7" height="6" rx="1"/></svg></div>
+        <h3>Libraries you can browse</h3>
+        <p>Browse by top rated and by genre, or switch to a clean poster wall of every title with sorting and an unwatched filter.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v5h1"/></svg></div>
+        <h3>Details pages that answer everything</h3>
+        <p>Synopsis, cast, 4K, HDR and surround badges, seasons and episodes, and one Play button that knows whether to resume.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <h3>Search with your voice or the keys</h3>
+        <p>A remote-friendly keyboard and voice search, with the title you meant at the top and episodes right below it.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+        <h3>Player controls that stay out of the way</h3>
+        <p>Scrub with left and right, see when the episode ends, and switch audio, subtitles, speed or quality from tidy side panels.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div>
+        <h3>Your server, your data</h3>
+        <p>Lagoon talks only to your own Jellyfin server. No account, no tracking, no ads, and the source is open for anyone to read.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="screenshots">
+  <div class="wrap">
+    <h2>See it on the big screen</h2>
+    <p class="intro">Real screenshots from a Google TV, driven with nothing but the remote.</p>
+
+    <div class="gallery">
+      <figure>
+        <img src="screenshots/library-browse.webp" width="1600" height="900" loading="lazy" alt="A Movies library with a featured film and a Top rated row of posters" />
+        <figcaption><strong>Browse a library.</strong> Featured titles, top rated and genre rows for each library.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/library-all-titles.webp" width="1600" height="900" loading="lazy" alt="A grid of movie posters with titles and years, sorted A to Z" />
+        <figcaption><strong>Every title at a glance.</strong> Sort by name, date added, release or rating.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/details-movie.webp" width="1600" height="900" loading="lazy" alt="A movie details page with logo, quality badges, synopsis and Play, Mark watched and Favorite buttons" />
+        <figcaption><strong>Movie details.</strong> Quality badges, cast and a Play button that resumes where you left off.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/details-series.webp" width="1600" height="900" loading="lazy" alt="A series details page with a Resume button showing the episode and time left" />
+        <figcaption><strong>Series details.</strong> Pick up the next episode with one press.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/details-episodes.webp" width="1600" height="900" loading="lazy" alt="A row of episode stills with episode names, runtimes and short descriptions" />
+        <figcaption><strong>Seasons and episodes.</strong> Stills, runtimes and descriptions, with progress bars.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/search.webp" width="1600" height="900" loading="lazy" alt="The search screen with an on-screen keyboard and matching movie and show posters" />
+        <figcaption><strong>Search.</strong> Type with the remote or use your voice.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/player.webp" width="1600" height="900" loading="lazy" alt="Player controls over an animated episode, with a seek bar, play controls and the end time" />
+        <figcaption><strong>Player controls.</strong> Big, clear and gone when you do not need them.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/player-speed.webp" width="1600" height="900" loading="lazy" alt="A playback speed panel open at the side of the player" />
+        <figcaption><strong>Side panels.</strong> Speed, quality, picture size and chapters without leaving the video.</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/player-audio-subtitles.webp" width="1600" height="900" loading="lazy" alt="Audio and subtitle track lists side by side" />
+        <figcaption><strong>Audio and subtitles.</strong> Both lists side by side, with the current track ticked.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="alt">
+  <div class="wrap">
+    <h2>Up and running in a few minutes</h2>
+    <p class="intro">Lagoon is not in the Play Store, so you install it yourself. It is a one-time job; the
+      <a href="install.html">install guide</a> walks through every method.</p>
+    <div class="steps">
+      <div class="step">
+        <h3>Allow the install</h3>
+        <p>Turn on installing apps from unknown sources for the app you will use to install Lagoon.</p>
+      </div>
+      <div class="step">
+        <h3>Get the APK onto the TV</h3>
+        <p>Use the free Downloader app, send it from your phone, or install it from a computer with ADB.</p>
+      </div>
+      <div class="step">
+        <h3>Sign in to Jellyfin</h3>
+        <p>Enter your server address and sign in with a password or Quick Connect. Your library appears straight away.</p>
+      </div>
+    </div>
+    <p style="margin-top:32px"><a class="btn btn-primary" href="install.html">Read the install guide</a></p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2>Questions</h2>
+    <details class="faq">
+      <summary>Is Lagoon an official Jellyfin app?</summary>
+      <p>No. Lagoon is an independent project built on the open source Jellyfin for Android TV app. It keeps that app's
+        playback engine and server support and replaces the interface. It is not affiliated with or endorsed by the Jellyfin project.</p>
+    </details>
+    <details class="faq">
+      <summary>What do I need?</summary>
+      <p>A Jellyfin server you can reach from your TV, and a Google TV or Android TV device running Android 6.0 or newer.
+        It has been tested on Google TV.</p>
+    </details>
+    <details class="faq">
+      <summary>Does it cost anything?</summary>
+      <p>No. Lagoon is free and open source under the GNU General Public License, version 2.</p>
+    </details>
+    <details class="faq">
+      <summary>Can I keep the official Jellyfin app installed?</summary>
+      <p>Yes. Lagoon installs as a separate app, so both can sit side by side.</p>
+    </details>
+    <details class="faq">
+      <summary>How do I update?</summary>
+      <p>Download the newest APK and install it over the top, the same way you installed it. Your sign-in and settings are kept.</p>
+    </details>
+    <details class="faq">
+      <summary>Where do I report a problem?</summary>
+      <p>Open an issue on <a href="https://github.com/JTCozart/lagoon-tv/issues" target="_blank" rel="noopener noreferrer">GitHub</a>.
+        Please leave out server addresses, user names and anything else private.</p>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="./" style="font-size:1rem">Lagoon</a>
+      <div>GPL-2.0 License &middot; &copy; 2026 Jake Cozart</div>
+      <div>Built on <a href="https://github.com/jellyfin/jellyfin-androidtv" target="_blank" rel="noopener noreferrer">Jellyfin for Android TV</a>
+        &middot; An app by <a href="https://cozartconsulting.com" target="_blank" rel="noopener noreferrer">Cozart Consulting</a></div>
+    </div>
+    <div class="links">
+      <a href="install.html">Install guide</a>
+      <a href="https://github.com/JTCozart/lagoon-tv" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/JTCozart/lagoon-tv/releases" target="_blank" rel="noopener noreferrer">Releases</a>
+      <a href="https://github.com/JTCozart/lagoon-tv/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+      <a href="https://github.com/JTCozart/lagoon-tv/blob/master/NOTICES.md" target="_blank" rel="noopener noreferrer">Notices</a>
+      <a href="https://github.com/JTCozart/lagoon-tv/blob/master/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing</a>
+      <a href="https://linktr.ee/jtczrt" target="_blank" rel="noopener noreferrer">Linktree</a>
+    </div>
+    <div class="badge">
+      <a href="https://www.aihonestybadge.com" target="_blank" rel="noopener"><img src="https://www.aihonestybadge.com/badges/ai-assisted.svg" alt="AI Assisted Badge" /></a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

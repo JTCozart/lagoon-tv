@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Install Lagoon | Sideloading guide for Google TV and Android TV</title>
+  <meta name="description" content="How to sideload the Lagoon Jellyfin app on Google TV, Android TV and Fire TV: with the Downloader app, by sending the file from your phone, or with ADB from a computer." />
+  <link rel="canonical" href="https://jtcozart.github.io/lagoon-tv/install.html" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#060b12" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="Lagoon home">
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <defs><linearGradient id="nav-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#3B82F6"/></linearGradient></defs>
+        <circle cx="32" cy="32" r="24" fill="none" stroke="url(#nav-g)" stroke-width="6"/>
+        <path d="M26 20 L46 32 L26 44 Z" fill="url(#nav-g)"/>
+      </svg>
+      Lagoon
+    </a>
+    <div class="links">
+      <a class="optional" href="./#features">Features</a>
+      <a class="optional" href="./#screenshots">Screenshots</a>
+      <a href="install.html">Install</a>
+      <a class="optional" href="https://github.com/JTCozart/lagoon-tv" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="btn btn-primary btn-small" href="https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk">Download</a>
+    </div>
+  </div>
+</nav>
+
+<main class="guide">
+  <div class="wrap" style="max-width:860px">
+    <div class="eyebrow">Install guide</div>
+    <h1>Installing Lagoon on your TV</h1>
+    <p>Lagoon is not in the Google Play Store, so it is installed from its APK file. This is called sideloading.
+      It takes a few minutes the first time, and updates work the same way. Pick whichever method suits you:</p>
+
+    <div class="toc">
+      <a class="btn btn-ghost btn-small" href="#downloader">Downloader app (easiest)</a>
+      <a class="btn btn-ghost btn-small" href="#phone">Send from your phone</a>
+      <a class="btn btn-ghost btn-small" href="#adb">ADB from a computer</a>
+      <a class="btn btn-ghost btn-small" href="#fire-tv">Amazon Fire TV</a>
+    </div>
+
+    <p>The download link is always the newest release:</p>
+    <div class="url-box">https://github.com/JTCozart/lagoon-tv/releases/latest/download/lagoon-tv.apk</div>
+
+    <div class="callout">
+      Menu names differ a little between TV makers and Android versions. If a setting is not exactly where these
+      steps say, look for the same words under Settings &gt; Apps or Settings &gt; System.
+    </div>
+
+    <h2 id="before">Before you start: allow installing apps</h2>
+    <p>Android only installs apps from outside the Play Store when you give a specific app permission to do it.
+      On newer Google TV devices that option is hidden until developer options are turned on.</p>
+    <ol>
+      <li>Open <strong>Settings &gt; System &gt; About</strong>.</li>
+      <li>Scroll to <strong>Android TV OS build</strong> (or <strong>Build</strong>) and press Select on it seven times,
+        until a message says you are now a developer.</li>
+      <li>Go back to <strong>Settings &gt; Apps &gt; Security &amp; restrictions &gt; Unknown sources</strong>.
+        On some devices this is under <strong>Settings &gt; Privacy &gt; Security &amp; restrictions</strong>.</li>
+      <li>Turn it on for the app you will install Lagoon with, such as Downloader or your file manager.
+        You can turn it off again once Lagoon is installed.</li>
+    </ol>
+
+    <h2 id="downloader">Method 1: the Downloader app (easiest)</h2>
+    <p>Downloader is a free app built for exactly this. Everything happens on the TV.</p>
+    <ol>
+      <li>On the TV, open the Play Store, search for <strong>Downloader</strong> by AFTVnews and install it.</li>
+      <li>Allow Downloader to install unknown apps, as described in <a href="#before">Before you start</a>.</li>
+      <li>Open Downloader. In the address box, type the download link above and choose <strong>Go</strong>.</li>
+      <li>When the download finishes, choose <strong>Install</strong>, then <strong>Done</strong>.</li>
+      <li>Downloader offers to delete the APK file. You can say yes; Lagoon stays installed.</li>
+    </ol>
+
+    <h2 id="phone">Method 2: send it from your phone</h2>
+    <p>Handy if typing a long address with a remote is a chore.</p>
+    <ol>
+      <li>Install <strong>Send files to TV</strong> (or a similar file transfer app) on both your phone and the TV.</li>
+      <li>On your phone, open the download link above to save <code class="inline">lagoon-tv.apk</code>.</li>
+      <li>Open the transfer app on both devices, choose <strong>Receive</strong> on the TV and <strong>Send</strong> on
+        the phone, and pick the APK.</li>
+      <li>On the TV, open the received file from a file manager that you have allowed to install unknown apps,
+        and choose <strong>Install</strong>.</li>
+    </ol>
+
+    <h2 id="adb">Method 3: ADB from a computer</h2>
+    <p>For people comfortable with a command line. ADB is part of Google's free
+      <a href="https://developer.android.com/tools/releases/platform-tools" target="_blank" rel="noopener noreferrer">Android SDK Platform Tools</a>.</p>
+    <ol>
+      <li>Turn on developer options on the TV, as in <a href="#before">Before you start</a>.</li>
+      <li>In <strong>Settings &gt; System &gt; Developer options</strong>, turn on <strong>USB debugging</strong>
+        or <strong>Network debugging</strong>. Newer Google TV devices call it <strong>Wireless debugging</strong>.</li>
+      <li>Find the TV's IP address under <strong>Settings &gt; Network &amp; Internet</strong>, on your current network.</li>
+      <li>On the computer, connect to the TV. On devices with <strong>Wireless debugging</strong>, first choose
+        <strong>Pair device with pairing code</strong> on the TV and pair using the address and code it shows:
+        <pre>adb pair 192.168.1.50:37425</pre>
+        Then connect, using the address shown on the Wireless debugging screen (older devices use port 5555):
+        <pre>adb connect 192.168.1.50:5555</pre>
+      </li>
+      <li>Accept the <strong>Allow debugging?</strong> prompt that appears on the TV.</li>
+      <li>Download the APK on the computer and install it:
+        <pre>adb install -r lagoon-tv.apk</pre>
+        The <code class="inline">-r</code> flag lets the same command update an existing install.
+      </li>
+    </ol>
+
+    <h2 id="fire-tv">Amazon Fire TV</h2>
+    <p>Lagoon is built for Android TV and Google TV. Fire TV runs a version of Android, so it should work there too,
+      but it has not been tested.</p>
+    <ol>
+      <li>Go to <strong>Settings &gt; My Fire TV &gt; About</strong> and select your device name seven times to show developer options.</li>
+      <li>Go to <strong>Settings &gt; My Fire TV &gt; Developer options &gt; Install unknown apps</strong> and turn it on for Downloader.</li>
+      <li>Install <strong>Downloader</strong> from the Amazon Appstore and follow <a href="#downloader">Method 1</a>.</li>
+    </ol>
+
+    <h2 id="first-run">First start</h2>
+    <ol>
+      <li>Open <strong>Lagoon</strong> from your apps. It may sit at the end of the apps row the first time.</li>
+      <li>Enter your Jellyfin server address, for example <code class="inline">https://jellyfin.example.com</code>
+        or <code class="inline">192.168.1.20:8096</code> on your home network.</li>
+      <li>Sign in with your user name and password, or choose <strong>Quick Connect</strong>: Lagoon shows a code,
+        and you approve it from the Jellyfin app or website on another device.</li>
+    </ol>
+
+    <h2 id="updating">Updating</h2>
+    <p>Install the newest APK the same way, over the top of the old one. Your sign-in and settings are kept.
+      Each release is listed on the <a href="https://github.com/JTCozart/lagoon-tv/releases" target="_blank" rel="noopener noreferrer">releases page</a>
+      with notes on what changed.</p>
+
+    <h2 id="verify">Checking the download</h2>
+    <p>Every release includes a <code class="inline">SHA256SUMS</code> file. To confirm the APK you downloaded is the one
+      the release published, compare its checksum:</p>
+    <pre>sha256sum lagoon-tv.apk        # Linux and macOS
+Get-FileHash lagoon-tv.apk     # Windows PowerShell</pre>
+
+    <div class="callout warn">
+      Only download Lagoon from this site or from the GitHub releases page. An APK from anywhere else could have been changed.
+    </div>
+
+    <h2 id="trouble">Troubleshooting</h2>
+    <details class="faq">
+      <summary>"App not installed" or "There was a problem parsing the package"</summary>
+      <p>The download may be incomplete; delete it and download again. If you previously built Lagoon yourself,
+        uninstall that copy first, because a differently signed version cannot be installed over it.</p>
+    </details>
+    <details class="faq">
+      <summary>The Install button is greyed out or nothing happens</summary>
+      <p>The app you are installing from has not been allowed to install unknown apps. See <a href="#before">Before you start</a>.</p>
+    </details>
+    <details class="faq">
+      <summary>Lagoon cannot find my server</summary>
+      <p>Check the address works in a web browser on the same network, include the port if your server uses one
+        (Jellyfin's default is 8096), and make sure the TV is on the same network when using a local address.</p>
+    </details>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="./" style="font-size:1rem">Lagoon</a>
+      <div>GPL-2.0 License &middot; &copy; 2026 Jake Cozart</div>
+      <div>Built on <a href="https://github.com/jellyfin/jellyfin-androidtv" target="_blank" rel="noopener noreferrer">Jellyfin for Android TV</a>
+        &middot; An app by <a href="https://cozartconsulting.com" target="_blank" rel="noopener noreferrer">Cozart Consulting</a></div>
+    </div>
+    <div class="links">
+      <a href="./">Home</a>
+      <a href="https://github.com/JTCozart/lagoon-tv" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/JTCozart/lagoon-tv/releases" target="_blank" rel="noopener noreferrer">Releases</a>
+      <a href="https://github.com/JTCozart/lagoon-tv/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+      <a href="https://github.com/JTCozart/lagoon-tv/blob/master/NOTICES.md" target="_blank" rel="noopener noreferrer">Notices</a>
+      <a href="https://linktr.ee/jtczrt" target="_blank" rel="noopener noreferrer">Linktree</a>
+    </div>
+    <div class="badge">
+      <a href="https://www.aihonestybadge.com" target="_blank" rel="noopener"><img src="https://www.aihonestybadge.com/badges/ai-assisted.svg" alt="AI Assisted Badge" /></a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
