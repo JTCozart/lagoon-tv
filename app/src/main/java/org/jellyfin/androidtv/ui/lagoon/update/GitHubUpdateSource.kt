@@ -19,9 +19,10 @@ class GitHubUpdateSource(private val client: OkHttpClient) : UpdateSource {
 		const val LatestReleaseUrl = "https://api.github.com/repos/JTCozart/lagoon-tv/releases/latest"
 		const val UserAgent = "Lagoon-TV-update-check"
 		const val BufferSize = 64 * 1024
+		const val HttpNotFound = 404
 	}
 
-	override suspend fun latestRelease(): ReleaseInfo? = withContext(Dispatchers.IO) {
+	override suspend fun latestRelease(): ReleaseLookup = withContext(Dispatchers.IO) {
 		val request = Request.Builder()
 			.url(LatestReleaseUrl)
 			.header("Accept", "application/vnd.github+json")
@@ -30,16 +31,19 @@ class GitHubUpdateSource(private val client: OkHttpClient) : UpdateSource {
 
 		try {
 			client.newCall(request).execute().use { response ->
-				if (!response.isSuccessful) {
-					Timber.i("Update check found no release status=%d", response.code)
-					return@withContext null
+				when {
+					response.code == HttpNotFound -> ReleaseLookup.NoRelease
+					!response.isSuccessful -> {
+						Timber.i("Update check refused status=%d", response.code)
+						ReleaseLookup.Unreachable
+					}
+					else -> response.body?.string()?.let(ReleaseParser::parse)?.let(ReleaseLookup::Found) ?: ReleaseLookup.NoRelease
 				}
-				response.body?.string()?.let(ReleaseParser::parse)
 			}
 		} catch (error: IOException) {
-			// The update check is best effort; being offline or rate limited must never bother the viewer
+			// Best effort: being offline or rate limited only matters when the viewer asked for the check
 			Timber.w(error, "Update check failed")
-			null
+			ReleaseLookup.Unreachable
 		}
 	}
 

@@ -65,9 +65,9 @@ fun createDeviceProfileReport(
 ) = buildMarkdown {
 	// Header
 	appendLine("---")
-	appendLine("client: Jellyfin for Android TV")
+	appendLine("client: Lagoon for Android TV")
 	appendLine("client_version: ${BuildConfig.VERSION_NAME}")
-	appendLine("client_repository: https://github.com/jellyfin/jellyfin-androidtv")
+	appendLine("client_repository: https://github.com/JTCozart/lagoon-tv")
 	appendLine("type: media_capabilities_report")
 	appendLine("format: markdown")
 	appendLine("---")

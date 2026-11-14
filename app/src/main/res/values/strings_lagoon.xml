@@ -63,4 +63,11 @@
     <string name="lagoon_update_failed">The update did not download correctly, so nothing was installed. Check the connection and try again.</string>
     <string name="lagoon_update_permission">Allow Lagoon to install apps on the screen that opened, or under Settings, Apps, Security and restrictions, then choose Update now again.</string>
     <string name="lagoon_category_all">All</string>
+    <string name="lagoon_about_version">Lagoon version</string>
+    <string name="lagoon_update_check">Check for updates</string>
+    <string name="lagoon_update_check_caption">Looks for a newer Lagoon release on GitHub</string>
+    <string name="lagoon_update_checking">Checking…</string>
+    <string name="lagoon_update_up_to_date">You have the newest version</string>
+    <string name="lagoon_update_check_failed">Could not reach GitHub. Check the connection and try again.</string>
+    <string name="lagoon_update_found">Lagoon %1$s is available</string>
 </resources>

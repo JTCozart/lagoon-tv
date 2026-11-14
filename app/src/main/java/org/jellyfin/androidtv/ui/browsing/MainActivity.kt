@@ -25,6 +25,8 @@ import org.jellyfin.androidtv.ui.background.AppBackground
 import org.jellyfin.androidtv.ui.base.JellyfinTheme
 import org.jellyfin.androidtv.ui.base.ProvideLocalInteractionTracker
 import org.jellyfin.androidtv.ui.composable.compat.AppNavigationHost
+import org.jellyfin.androidtv.ui.lagoon.update.UpdatePrompt
+import org.jellyfin.androidtv.ui.lagoon.update.UpdateViewModel
 import org.jellyfin.androidtv.ui.navigation.NavigationRepository
 import org.jellyfin.androidtv.ui.screensaver.InAppScreensaver
 import org.jellyfin.androidtv.ui.settings.compat.MainActivitySettings
@@ -39,6 +41,7 @@ class MainActivity : FragmentActivity() {
 	private val sessionRepository by inject<SessionRepository>()
 	private val userRepository by inject<UserRepository>()
 	private val interactionTrackerViewModel by viewModel<InteractionTrackerViewModel>()
+	private val updateViewModel by viewModel<UpdateViewModel>()
 	private val workManager by inject<WorkManager>()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +65,8 @@ class MainActivity : FragmentActivity() {
 				interactionTrackerViewModel.notifyInteraction(canCancel = false, userInitiated = false)
 			}.launchIn(lifecycleScope)
 
+		updateViewModel.checkOnLaunch()
+
 		setContent {
 			JellyfinTheme {
 				ProvideLocalInteractionTracker(
@@ -73,6 +78,7 @@ class MainActivity : FragmentActivity() {
 					)
 					InAppScreensaver()
 					MainActivitySettings()
+					UpdatePrompt(updateViewModel)
 				}
 			}
 		}

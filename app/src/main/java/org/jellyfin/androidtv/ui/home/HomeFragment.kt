@@ -26,8 +26,6 @@ import org.jellyfin.androidtv.data.service.BackgroundService
 import org.jellyfin.androidtv.ui.lagoon.browse.rememberLagoonActions
 import org.jellyfin.androidtv.ui.lagoon.home.HomeScreen
 import org.jellyfin.androidtv.ui.lagoon.home.HomeViewModel
-import org.jellyfin.androidtv.ui.lagoon.update.UpdatePrompt
-import org.jellyfin.androidtv.ui.lagoon.update.UpdateViewModel
 import org.jellyfin.androidtv.util.apiclient.getUrl
 import org.jellyfin.androidtv.util.apiclient.primaryImage
 import org.jellyfin.sdk.api.client.ApiClient
@@ -51,7 +49,6 @@ class HomeFragment : Fragment() {
 
 	// Activity scoped so shelves and focus survive opening details or the player and coming back
 	private val homeViewModel by activityViewModel<HomeViewModel>()
-	private val updateViewModel by activityViewModel<UpdateViewModel>()
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -67,7 +64,6 @@ class HomeFragment : Fragment() {
 			profileName = user?.name.orEmpty(),
 			profileImageUrl = user?.primaryImage?.getUrl(api),
 		)
-		UpdatePrompt(updateViewModel)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,7 +84,6 @@ class HomeFragment : Fragment() {
 			viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
 				backgroundService.clearBackgrounds()
 				homeViewModel.refresh()
-				updateViewModel.checkIfDue()
 
 				merge(
 					api.webSocket.subscribe<UserDataChangedMessage>().map { },

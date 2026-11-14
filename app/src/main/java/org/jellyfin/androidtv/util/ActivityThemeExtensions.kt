@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.preference.UserPreferences
 import org.jellyfin.androidtv.preference.constant.AppTheme
+import org.jellyfin.androidtv.ui.base.ActiveColorScheme
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -35,6 +36,7 @@ fun FragmentActivity.applyTheme() {
 	val viewModel by viewModels<ThemeViewModel>()
 	val userPreferences by inject<UserPreferences>()
 	val theme = userPreferences[UserPreferences.appTheme]
+	ActiveColorScheme.use(theme)
 
 	if (viewModel.theme != theme) {
 		if (viewModel.theme != null) {

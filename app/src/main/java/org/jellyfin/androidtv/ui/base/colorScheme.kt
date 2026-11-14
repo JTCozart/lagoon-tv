@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import org.jellyfin.design.Tokens
 
 /**
- * The Lagoon palette: a deep navy base with a teal to blue accent.
+ * The Lagoon palette: a deep navy base with a teal to blue accent. Other app themes swap the accent (see [AccentPalettes]).
  * Focused controls take the accent so the remote's position is obvious from across the room.
  */
 object LagoonColors {
@@ -19,38 +19,38 @@ object LagoonColors {
 	val Ink = Color(0xFF04121A)
 }
 
-fun colorScheme(): ColorScheme = ColorScheme(
+fun colorScheme(palette: AccentPalette = AccentPalettes.Lagoon): ColorScheme = ColorScheme(
 	background = LagoonColors.Navy,
 	onBackground = Tokens.Color.colorBluegrey25,
-	accent = LagoonColors.Teal,
-	accentSecondary = LagoonColors.Blue,
+	accent = palette.accent,
+	accentSecondary = palette.accentSecondary,
 	onAccent = LagoonColors.Ink,
 	button = LagoonColors.NavyRaised.copy(alpha = 0.85f),
 	onButton = Color(0xFFDDE6EE),
-	buttonFocused = LagoonColors.Teal,
+	buttonFocused = palette.accent,
 	onButtonFocused = LagoonColors.Ink,
 	buttonDisabled = Color(0x33747474),
 	onButtonDisabled = Color(0xFF686868),
-	buttonActive = LagoonColors.TealDeep.copy(alpha = 0.3f),
-	onButtonActive = LagoonColors.Teal,
+	buttonActive = palette.accentDeep.copy(alpha = 0.3f),
+	onButtonActive = palette.accent,
 	input = LagoonColors.NavyRaised.copy(alpha = 0.85f),
 	onInput = Color(0xE6CCCCCC),
-	inputFocused = LagoonColors.Teal,
+	inputFocused = palette.accent,
 	onInputFocused = LagoonColors.Ink,
 	rangeControlBackground = Tokens.Color.colorBluegrey700,
-	rangeControlFill = LagoonColors.Teal,
+	rangeControlFill = palette.accent,
 	rangeControlKnob = Tokens.Color.colorBluegrey100,
 	seekbarBuffer = Tokens.Color.colorBluegrey300,
 	recording = Tokens.Color.colorRed300,
 	onRecording = Tokens.Color.colorRed25,
-	badge = LagoonColors.TealDeep,
+	badge = palette.accentDeep,
 	onBadge = LagoonColors.Ink,
 	listHeader = Tokens.Color.colorGrey50,
-	listOverline = LagoonColors.Teal,
+	listOverline = palette.accent,
 	listHeadline = Tokens.Color.colorGrey25,
 	listCaption = Tokens.Color.colorGrey200,
 	listButton = Color.Transparent,
-	listButtonFocused = LagoonColors.TealDeep.copy(alpha = 0.35f),
+	listButtonFocused = palette.accentDeep.copy(alpha = 0.35f),
 	surface = LagoonColors.NavySurface,
 	scrim = LagoonColors.Navy.copy(alpha = 0.75f),
 )
@@ -100,4 +100,5 @@ data class ColorScheme(
 	val scrim: Color,
 )
 
-val LocalColorScheme = staticCompositionLocalOf { colorScheme() }
+/** Null until a screen provides its own scheme; [JellyfinTheme.colorScheme] then falls back to [ActiveColorScheme]. */
+val LocalColorScheme = staticCompositionLocalOf<ColorScheme?> { null }

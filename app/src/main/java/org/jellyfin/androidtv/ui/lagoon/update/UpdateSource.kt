@@ -4,8 +4,8 @@ import java.io.File
 
 /** Where Lagoon finds and fetches new releases. */
 interface UpdateSource {
-	/** The newest stable release, or null when there is none or it cannot be reached. */
-	suspend fun latestRelease(): ReleaseInfo?
+	/** Looks up the newest stable release. */
+	suspend fun latestRelease(): ReleaseLookup
 
 	/**
 	 * Downloads the release's APK to [target] and confirms it matches the published checksum.

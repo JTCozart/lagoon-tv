@@ -43,6 +43,8 @@ import org.jellyfin.androidtv.ui.lagoon.design.PillEmphasis
 
 private const val PercentScale = 100
 private const val NotesMaxLines = 5
+// GitHub writes its generated notes in Markdown, which the dialog shows as plain text
+private const val MarkdownBold = "**"
 private val PanelShape = RoundedCornerShape(18.dp)
 
 /**
@@ -64,7 +66,7 @@ fun UpdatePrompt(viewModel: UpdateViewModel) {
 	}
 
 	val release = when (shown) {
-		UpdateState.Hidden -> return
+		UpdateState.Hidden, UpdateState.Checking, UpdateState.UpToDate, UpdateState.CheckFailed -> return
 		is UpdateState.Offered -> shown.release
 		is UpdateState.Downloading -> shown.release
 		is UpdateState.ReadyToInstall -> shown.release
@@ -130,7 +132,7 @@ private fun UpdatePanel(
 			modifier = Modifier.padding(top = 4.dp),
 		)
 
-		release.notes.trim().takeIf { it.isNotEmpty() }?.let { notes ->
+		release.notes.replace(MarkdownBold, "").trim().takeIf { it.isNotEmpty() }?.let { notes ->
 			Text(
 				text = notes,
 				fontSize = 14.sp,

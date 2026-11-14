@@ -2,8 +2,6 @@ package org.jellyfin.androidtv.ui.lagoon.update
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import java.time.Duration
-import java.time.Instant
 
 class AppVersionTests : FunSpec({
 	test("A leading v is ignored") {
@@ -80,34 +78,22 @@ class ChecksumListTests : FunSpec({
 })
 
 class UpdateScheduleTests : FunSpec({
-	val now = Instant.parse("2026-11-14T20:00:00Z")
 	val installed = AppVersion.parse("1.0.0")!!
 
-	test("The first check happens straight away") {
-		UpdateSchedule.isCheckDue(now, lastCheck = null, installed) shouldBe true
+	test("Installed builds check on launch") {
+		UpdateSchedule.checksOnLaunch(installed) shouldBe true
 	}
 
-	test("Checks are at least twelve hours apart") {
-		UpdateSchedule.isCheckDue(now, now.minus(Duration.ofHours(3)), installed) shouldBe false
-		UpdateSchedule.isCheckDue(now, now.minus(Duration.ofHours(13)), installed) shouldBe true
-	}
-
-	test("Development builds never check, so a build from source is not replaced") {
-		UpdateSchedule.isCheckDue(now, lastCheck = null, AppVersion.parse("0.0.0-dev.1")!!) shouldBe false
+	test("Development builds never check on launch, so a build from source is not replaced") {
+		UpdateSchedule.checksOnLaunch(AppVersion.parse("0.0.0-dev.1")!!) shouldBe false
 	}
 
 	test("A newer release is offered") {
-		UpdateSchedule.shouldOffer(latest = AppVersion.parse("1.1.0")!!, installed, dismissed = null) shouldBe true
+		UpdateSchedule.shouldOffer(latest = AppVersion.parse("1.1.0")!!, installed) shouldBe true
 	}
 
 	test("The same or an older release is not offered") {
-		UpdateSchedule.shouldOffer(latest = installed, installed, dismissed = null) shouldBe false
-		UpdateSchedule.shouldOffer(latest = AppVersion.parse("0.9.0")!!, installed, dismissed = null) shouldBe false
-	}
-
-	test("A release the viewer said Not now to is not offered again, but the next one is") {
-		val dismissed = AppVersion.parse("1.1.0")!!
-		UpdateSchedule.shouldOffer(latest = AppVersion.parse("1.1.0")!!, installed, dismissed) shouldBe false
-		UpdateSchedule.shouldOffer(latest = AppVersion.parse("1.2.0")!!, installed, dismissed) shouldBe true
+		UpdateSchedule.shouldOffer(latest = installed, installed) shouldBe false
+		UpdateSchedule.shouldOffer(latest = AppVersion.parse("0.9.0")!!, installed) shouldBe false
 	}
 })

@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.preference.UserPreferences
 import org.jellyfin.androidtv.preference.constant.AppTheme
+import org.jellyfin.androidtv.ui.base.ActiveColorScheme
 import org.jellyfin.androidtv.ui.base.Text
 import org.jellyfin.androidtv.ui.base.form.RadioButton
 import org.jellyfin.androidtv.ui.base.list.ListButton
@@ -39,6 +40,7 @@ fun SettingsCustomizationThemeScreen() {
 				trailingContent = { RadioButton(checked = appTheme == entry) },
 				onClick = {
 					appTheme = entry
+					ActiveColorScheme.use(entry)
 					router.back()
 				},
 				modifier = Modifier
