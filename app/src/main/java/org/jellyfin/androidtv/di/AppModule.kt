@@ -67,7 +67,20 @@ import org.jellyfin.sdk.api.client.HttpClientOptions
 import org.jellyfin.sdk.api.okhttp.OkHttpFactory
 import org.jellyfin.sdk.createJellyfin
 import org.jellyfin.sdk.model.ClientInfo
+import org.jellyfin.androidtv.ui.lagoon.home.HomeViewModel
+import org.jellyfin.androidtv.ui.lagoon.home.JellyfinShelfLoader
+import org.jellyfin.androidtv.ui.lagoon.browse.PlayTargetResolver
+import org.jellyfin.androidtv.ui.lagoon.details.DetailsLoader
+import org.jellyfin.androidtv.ui.lagoon.details.DetailsViewModel
+import org.jellyfin.androidtv.ui.lagoon.details.JellyfinDetailsLoader
+import org.jellyfin.androidtv.ui.lagoon.library.JellyfinLibraryLoader
+import org.jellyfin.androidtv.ui.lagoon.library.LibraryLoader
+import org.jellyfin.androidtv.ui.lagoon.library.LibraryViewModel
+import org.jellyfin.androidtv.ui.lagoon.search.LagoonSearchViewModel
+import org.jellyfin.androidtv.ui.lagoon.home.ShelfLoader
+import org.jellyfin.sdk.model.api.BaseItemDto
 import org.koin.android.ext.koin.androidContext
+import java.util.UUID
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -168,6 +181,22 @@ val appModule = module {
 	viewModel { DreamViewModel(get(), get(), get(), get(), get()) }
 	viewModel { SettingsViewModel() }
 	viewModel { SettingsLibrariesScreenViewModel(get()) }
+
+	// Lagoon home screen
+	single<ShelfLoader> { JellyfinShelfLoader(androidContext(), get(), get()) }
+	single { PlayTargetResolver(get()) }
+	viewModel { HomeViewModel(get(), get(), get(), get()) }
+
+	// Lagoon details screen
+	single<DetailsLoader> { JellyfinDetailsLoader(get()) }
+	viewModel { (itemId: UUID) -> DetailsViewModel(itemId, get(), get()) }
+
+	// Lagoon search screen
+	viewModel { LagoonSearchViewModel(get(), get(), get()) }
+
+	// Lagoon library screen
+	single<LibraryLoader> { JellyfinLibraryLoader(androidContext(), get()) }
+	viewModel { (library: BaseItemDto) -> LibraryViewModel(library, get(), get()) }
 
 	single { BackgroundService(get(), get(), get(), get(), get()) }
 

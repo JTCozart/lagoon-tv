@@ -59,6 +59,8 @@ import org.jellyfin.androidtv.ui.livetv.LiveTvGuideFragmentHelperKt;
 import org.jellyfin.androidtv.ui.livetv.TvManager;
 import org.jellyfin.androidtv.ui.navigation.Destinations;
 import org.jellyfin.androidtv.ui.navigation.NavigationRepository;
+import org.jellyfin.androidtv.ui.lagoon.player.LagoonPlayerOverlayFragment;
+import org.jellyfin.androidtv.ui.lagoon.player.PlayerControlsOverlay;
 import org.jellyfin.androidtv.ui.playback.overlay.LeanbackOverlayFragment;
 import org.jellyfin.androidtv.ui.presentation.CardPresenter;
 import org.jellyfin.androidtv.ui.presentation.ChannelCardPresenter;
@@ -125,7 +127,9 @@ public class CustomPlaybackOverlayFragment extends Fragment implements LiveTvGui
     private boolean mPopupPanelVisible = false;
     private boolean navigating = false;
 
-    protected LeanbackOverlayFragment leanbackOverlayFragment;
+    protected PlayerControlsOverlay leanbackOverlayFragment;
+    // Lagoon draws its own title and clock, so upstream's top panel stays hidden while its controls are in use
+    private boolean usesLagoonControls = false;
 
     private final Lazy<org.jellyfin.sdk.api.client.ApiClient> api = inject(org.jellyfin.sdk.api.client.ApiClient.class);
     private final Lazy<MediaManager> mediaManager = inject(MediaManager.class);
@@ -311,7 +315,17 @@ public class CustomPlaybackOverlayFragment extends Fragment implements LiveTvGui
     }
 
     private void prepareOverlayFragment() {
-        leanbackOverlayFragment = (LeanbackOverlayFragment) getChildFragmentManager().findFragmentById(R.id.leanback_fragment);
+        // Lagoon: its own controls for everything except Live TV, which keeps the leanback overlay and its guide
+        Fragment overlay = getChildFragmentManager().findFragmentById(R.id.leanback_fragment);
+        if (overlay == null) {
+            boolean isLiveTv = mItemsToPlay.get(0).getType() == BaseItemKind.TV_CHANNEL;
+            overlay = isLiveTv ? new LeanbackOverlayFragment() : new LagoonPlayerOverlayFragment();
+            getChildFragmentManager().beginTransaction().replace(R.id.leanback_fragment, overlay).commitNow();
+        }
+        usesLagoonControls = overlay instanceof LagoonPlayerOverlayFragment;
+        if (usesLagoonControls) binding.topPanel.setVisibility(View.GONE);
+
+        leanbackOverlayFragment = (PlayerControlsOverlay) overlay;
         if (leanbackOverlayFragment != null) {
             leanbackOverlayFragment.initFromView(this);
             leanbackOverlayFragment.mediaInfoChanged();
@@ -616,7 +630,7 @@ public class CustomPlaybackOverlayFragment extends Fragment implements LiveTvGui
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_LEFT:
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    leanbackOverlayFragment.getPlayerGlue().setInjectedViewsVisibility();
+                    leanbackOverlayFragment.onSeekKey();
             }
 
             return false;
@@ -716,7 +730,7 @@ public class CustomPlaybackOverlayFragment extends Fragment implements LiveTvGui
         // Already showing!
         if (mIsVisible) return;
 
-        binding.topPanel.startAnimation(slideDown);
+        if (!usesLagoonControls) binding.topPanel.startAnimation(slideDown);
         mIsVisible = true;
         binding.skipOverlay.setSkipUiEnabled(!mIsVisible && !mGuideVisible && !mPopupPanelVisible);
     }
@@ -726,7 +740,7 @@ public class CustomPlaybackOverlayFragment extends Fragment implements LiveTvGui
         if (!mIsVisible) return;
 
         mIsVisible = false;
-        binding.topPanel.startAnimation(fadeOut);
+        if (!usesLagoonControls) binding.topPanel.startAnimation(fadeOut);
         binding.skipOverlay.setSkipUiEnabled(!mIsVisible && !mGuideVisible && !mPopupPanelVisible);
     }
 

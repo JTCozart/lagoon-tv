@@ -22,7 +22,7 @@ import org.jellyfin.androidtv.ui.playback.nextup.NextUpFragment
 import org.jellyfin.androidtv.ui.playback.stillwatching.StillWatchingFragment
 import org.jellyfin.androidtv.ui.player.photo.PhotoPlayerFragment
 import org.jellyfin.androidtv.ui.player.video.VideoPlayerFragment
-import org.jellyfin.androidtv.ui.search.SearchFragment
+import org.jellyfin.androidtv.ui.lagoon.search.LagoonSearchFragment
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.ItemSortBy
 import org.jellyfin.sdk.model.api.SeriesTimerInfoDto
@@ -33,8 +33,9 @@ import java.util.UUID
 object Destinations {
 	// General
 	val home = fragmentDestination<HomeFragment>()
-	fun search(query: String? = null) = fragmentDestination<SearchFragment> {
-		putString(SearchFragment.EXTRA_QUERY, query)
+	// Lagoon: search opens the redesigned screen, including searches started from the system
+	fun search(query: String? = null) = fragmentDestination<LagoonSearchFragment> {
+		putString(LagoonSearchFragment.ArgumentQuery, query)
 	}
 
 	// Browsing

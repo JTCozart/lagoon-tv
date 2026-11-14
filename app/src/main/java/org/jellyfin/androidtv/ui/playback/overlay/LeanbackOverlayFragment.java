@@ -11,6 +11,7 @@ import androidx.leanback.app.PlaybackSupportFragment;
 
 import org.jellyfin.androidtv.preference.UserPreferences;
 import org.jellyfin.androidtv.preference.UserSettingPreferences;
+import org.jellyfin.androidtv.ui.lagoon.player.PlayerControlsOverlay;
 import org.jellyfin.androidtv.ui.playback.CustomPlaybackOverlayFragment;
 import org.jellyfin.androidtv.ui.playback.PlaybackController;
 import org.jellyfin.androidtv.ui.playback.PlaybackControllerContainer;
@@ -20,7 +21,7 @@ import coil3.ImageLoader;
 import kotlin.Lazy;
 import timber.log.Timber;
 
-public class LeanbackOverlayFragment extends PlaybackSupportFragment {
+public class LeanbackOverlayFragment extends PlaybackSupportFragment implements PlayerControlsOverlay {
     private CustomPlaybackTransportControlGlue playerGlue;
     private VideoPlayerAdapter playerAdapter;
     private boolean shouldShowOverlay = true;
@@ -118,6 +119,11 @@ public class LeanbackOverlayFragment extends PlaybackSupportFragment {
         if (playerAdapter != null) {
             playerAdapter.getMasterOverlayFragment().onPause();
         }
+    }
+
+    @Override
+    public void onSeekKey() {
+        playerGlue.setInjectedViewsVisibility();
     }
 
     public CustomPlaybackTransportControlGlue getPlayerGlue() {

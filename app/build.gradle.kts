@@ -1,3 +1,5 @@
+val LagoonApplicationId = "com.jtcozart.lagoon"
+
 plugins {
 	alias(libs.plugins.aboutlibraries)
 	alias(libs.plugins.android.application)
@@ -13,8 +15,8 @@ android {
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		targetSdk = libs.versions.android.targetSdk.get().toInt()
 
-		// Release version
-		applicationId = namespace
+		// Own application id so Lagoon installs beside the official Jellyfin app
+		applicationId = LagoonApplicationId
 		versionName = project.getVersionName()
 		versionCode = getVersionCode(versionName!!)
 	}
@@ -58,9 +60,9 @@ android {
 			proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
 			// Set package names used in various XML files
-			resValue("string", "app_id", namespace!!)
-			resValue("string", "app_search_suggest_authority", "${namespace}.content")
-			resValue("string", "app_search_suggest_intent_data", "content://${namespace}.content/intent")
+			resValue("string", "app_id", LagoonApplicationId)
+			resValue("string", "app_search_suggest_authority", "${LagoonApplicationId}.content")
+			resValue("string", "app_search_suggest_intent_data", "content://${LagoonApplicationId}.content/intent")
 
 			// Set flavored application name
 			resValue("string", "app_name", "@string/app_name_release")
@@ -75,9 +77,9 @@ android {
 			applicationIdSuffix = ".debug"
 
 			// Set package names used in various XML files
-			resValue("string", "app_id", namespace + applicationIdSuffix)
-			resValue("string", "app_search_suggest_authority", "${namespace + applicationIdSuffix}.content")
-			resValue("string", "app_search_suggest_intent_data", "content://${namespace + applicationIdSuffix}.content/intent")
+			resValue("string", "app_id", LagoonApplicationId + applicationIdSuffix)
+			resValue("string", "app_search_suggest_authority", "${LagoonApplicationId + applicationIdSuffix}.content")
+			resValue("string", "app_search_suggest_intent_data", "content://${LagoonApplicationId + applicationIdSuffix}.content/intent")
 
 			// Set flavored application name
 			resValue("string", "app_name", "@string/app_name_debug")
@@ -97,7 +99,7 @@ android {
 	}
 }
 
-base.archivesName.set("jellyfin-androidtv-v${project.getVersionName()}")
+base.archivesName.set("lagoon-tv-v${project.getVersionName()}")
 
 tasks.register("versionTxt") {
 	val path = layout.buildDirectory.asFile.get().resolve("version.txt")

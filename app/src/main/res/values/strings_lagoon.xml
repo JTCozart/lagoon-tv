@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lagoon_more_info">More info</string>
+    <string name="lagoon_resume">Resume</string>
+    <string name="lagoon_tab_browse">Browse</string>
+    <string name="lagoon_tab_all_titles">All titles</string>
+    <string name="lagoon_filter_unwatched">Unwatched</string>
+    <string name="lagoon_sort_recently_added">Recently added</string>
+    <string name="lagoon_sort_a_to_z">A to Z</string>
+    <string name="lagoon_sort_release_date">Release date</string>
+    <string name="lagoon_sort_rating">Top rated</string>
+    <string name="lagoon_shelf_recently_added">Recently added</string>
+    <string name="lagoon_shelf_top_rated">Top rated</string>
+    <plurals name="lagoon_title_count">
+        <item quantity="one">%1$d title</item>
+        <item quantity="other">%1$d titles</item>
+    </plurals>
+    <string name="lagoon_library_empty">Nothing here yet.</string>
+    <string name="lagoon_play_episode">Play %1$s</string>
+    <string name="lagoon_resume_episode">Resume %1$s</string>
+    <string name="lagoon_time_left">%1$s left</string>
+    <string name="lagoon_start_over">Start over</string>
+    <string name="lagoon_mark_watched">Mark watched</string>
+    <string name="lagoon_watched">Watched</string>
+    <string name="lagoon_favorite">Favorite</string>
+    <string name="lagoon_favorited">Favorited</string>
+    <string name="lagoon_starring">Starring %1$s</string>
+    <string name="lagoon_episodes">Episodes</string>
+    <string name="lagoon_cast_and_crew">Cast and crew</string>
+    <string name="lagoon_more_like_this">More like this</string>
+    <string name="lagoon_details_failed">This title could not be loaded. Check the server connection and try again.</string>
+    <string name="lagoon_search_hint">Search movies, shows and episodes</string>
+    <string name="lagoon_search_titles">Movies and shows</string>
+    <string name="lagoon_search_none">No matches for \"%1$s\"</string>
+    <string name="lagoon_search_working">Searching</string>
+    <string name="lagoon_key_space">Space</string>
+    <string name="lagoon_key_delete">Delete</string>
+    <string name="lagoon_key_clear">Clear</string>
+    <string name="lagoon_key_voice">Voice search</string>
+    <string name="lagoon_player_play">Play</string>
+    <string name="lagoon_player_pause">Pause</string>
+    <string name="lagoon_player_rewind">Rewind</string>
+    <string name="lagoon_player_fast_forward">Fast forward</string>
+    <string name="lagoon_player_previous">Previous episode</string>
+    <string name="lagoon_player_next">Next episode</string>
+    <string name="lagoon_player_audio_subtitles">Audio and subtitles</string>
+    <string name="lagoon_player_audio">Audio</string>
+    <string name="lagoon_player_subtitles">Subtitles</string>
+    <string name="lagoon_player_subtitles_off">Off</string>
+    <string name="lagoon_player_speed">Playback speed</string>
+    <string name="lagoon_player_quality">Quality</string>
+    <string name="lagoon_player_zoom">Picture size</string>
+    <string name="lagoon_player_chapters">Chapters</string>
+    <string name="lagoon_player_ends_at">Ends at %1$s</string>
+    <string name="lagoon_player_normal_speed">Normal</string>
+</resources>
