@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,19 +22,30 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.ImageLoader
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.SuccessResult
+import coil3.toBitmap
 import org.jellyfin.androidtv.ui.base.JellyfinTheme
 import org.jellyfin.androidtv.ui.base.Text
 import org.jellyfin.androidtv.util.apiclient.getUrl
@@ -42,7 +54,8 @@ import org.jellyfin.sdk.model.api.BaseItemDto
 import org.koin.compose.koinInject
 
 private const val BackdropFadeMillis = 600
-private const val InfoFadeMillis = 250
+private const val InfoFadeMillis = 220
+private const val InfoFadeOutMillis = 90
 private const val OverviewMaxLines = 3
 private const val CompactOverviewMaxLines = 2
 private const val BackdropWidthFraction = 0.78f
@@ -53,7 +66,8 @@ private val LogoMaxWidth = 380.dp
 
 /**
  * Full-bleed artwork for the title in the spotlight, anchored top right and faded into the background
- * on the left and bottom so text and rows stay readable.
+ * on the left and bottom so text and rows stay readable. The current picture stays up until the next one has
+ * loaded, so moving between titles cross-fades from art to art instead of flashing to black.
  */
 @Composable
 fun SpotlightBackdrop(item: BaseItemDto?, modifier: Modifier = Modifier) {
@@ -63,21 +77,22 @@ fun SpotlightBackdrop(item: BaseItemDto?, modifier: Modifier = Modifier) {
 		item?.let(CardArtwork::backdrop)?.getUrl(api, maxWidth = screenWidthPx)
 	}
 	val background = JellyfinTheme.colorScheme.background
+	val shownBackdrop = rememberLoadedBackdrop(url)
 
 	Box(modifier.fillMaxSize()) {
 		Crossfade(
-			targetState = url,
+			targetState = shownBackdrop,
 			animationSpec = tween(BackdropFadeMillis),
 			label = "SpotlightBackdrop",
 			modifier = Modifier
 				.align(Alignment.TopEnd)
 				.fillMaxWidth(BackdropWidthFraction)
 				.fillMaxHeight(BackdropHeightFraction),
-		) { backdropUrl ->
+		) { backdrop ->
 			Box(Modifier.fillMaxSize()) {
-				if (backdropUrl != null) {
-					AsyncImage(
-						model = backdropUrl,
+				if (backdrop != null) {
+					Image(
+						bitmap = backdrop.image,
 						contentDescription = null,
 						contentScale = ContentScale.Crop,
 						alignment = Alignment.TopCenter,
@@ -98,6 +113,26 @@ fun SpotlightBackdrop(item: BaseItemDto?, modifier: Modifier = Modifier) {
 	}
 }
 
+private class LoadedBackdrop(val url: String, val image: ImageBitmap)
+
+@Composable
+private fun rememberLoadedBackdrop(url: String?): LoadedBackdrop? {
+	val context = LocalContext.current
+	val imageLoader = koinInject<ImageLoader>()
+	var shown by remember { mutableStateOf<LoadedBackdrop?>(null) }
+
+	LaunchedEffect(url) {
+		if (url == null) {
+			shown = null
+			return@LaunchedEffect
+		}
+		val result = imageLoader.execute(ImageRequest.Builder(context).data(url).build())
+		// A failed load keeps the previous picture rather than blanking the spotlight
+		if (result is SuccessResult) shown = LoadedBackdrop(url, result.image.toBitmap().asImageBitmap())
+	}
+	return shown
+}
+
 /**
  * Logo or title, episode line, details and synopsis for the title in the spotlight.
  * [isCompact] trims the logo and synopsis when a page header shares the space.
@@ -107,7 +142,7 @@ fun SpotlightInfo(item: BaseItemDto?, modifier: Modifier = Modifier, isCompact: 
 	AnimatedContent(
 		targetState = item,
 		contentKey = { it?.id },
-		transitionSpec = { fadeIn(tween(InfoFadeMillis)) togetherWith fadeOut(tween(InfoFadeMillis)) },
+		transitionSpec = { fadeIn(tween(InfoFadeMillis, delayMillis = InfoFadeOutMillis)) togetherWith fadeOut(tween(InfoFadeOutMillis)) },
 		contentAlignment = Alignment.BottomStart,
 		label = "SpotlightInfo",
 		modifier = modifier,

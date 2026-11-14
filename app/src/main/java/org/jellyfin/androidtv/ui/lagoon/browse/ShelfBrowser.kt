@@ -2,7 +2,9 @@ package org.jellyfin.androidtv.ui.lagoon.browse
 
 import android.view.KeyEvent
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +32,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.focus.onFocusChanged
@@ -41,6 +46,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -48,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.ui.base.JellyfinTheme
 import org.jellyfin.androidtv.ui.base.Text
@@ -61,12 +68,14 @@ import kotlin.time.Duration.Companion.seconds
 
 private val BillboardRotation = 10.seconds
 private val ShelfTitleAllowance = 48.dp
+private const val SpotlightResizeMillis = 280
 private val CardRemoteKeys = setOf(KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_MENU)
 
 /**
  * The streaming-app browse layout: a spotlight for the featured or focused title on top, with Play and
  * More info while the billboard has focus, and horizontally scrolling shelves below.
- * [header] sits above the spotlight text, for a page title or tabs.
+ * [header] sits above the spotlight text, for a page title or tabs. While a shelf has focus the spotlight
+ * shrinks to [compactSpotlightHeight] so a whole row of posters fits below it.
  */
 @Composable
 fun ShelfBrowser(
@@ -77,13 +86,22 @@ fun ShelfBrowser(
 	actions: LagoonActions,
 	modifier: Modifier = Modifier,
 	spotlightHeight: Dp = LagoonDimens.SpotlightHeight,
+	compactSpotlightHeight: Dp = LagoonDimens.CompactSpotlightHeight,
 	header: (@Composable () -> Unit)? = null,
 ) {
 	var isBillboardFocused by remember { mutableStateOf(false) }
+	var isShelfFocused by remember { mutableStateOf(false) }
 	var focusedCardItem by remember { mutableStateOf<BaseItemDto?>(null) }
 	var featuredIndex by remember { mutableIntStateOf(0) }
 	val featuredItem = featured.getOrNull(featuredIndex % featured.size.coerceAtLeast(1))
-	val spotlightItem = if (isBillboardFocused || focusedCardItem == null) featuredItem ?: focusedCardItem else focusedCardItem
+	// Cards settle before the spotlight follows them; the billboard shows its title at once so Play matches it
+	val settledCardItem = rememberSettledItem(focusedCardItem)
+	val spotlightItem = if (isBillboardFocused || focusedCardItem == null) featuredItem ?: settledCardItem else settledCardItem
+	val shownSpotlightHeight by animateDpAsState(
+		targetValue = if (isShelfFocused) compactSpotlightHeight else spotlightHeight,
+		animationSpec = tween(SpotlightResizeMillis),
+		label = "SpotlightHeight",
+	)
 
 	val restoreFocus = remember { focusMemory.lastFocus }
 	val shelvesState = rememberLazyListState(initialFirstVisibleItemIndex = restoreFocus?.shelfIndex ?: 0)
@@ -130,13 +148,13 @@ fun ShelfBrowser(
 			Box(
 				Modifier
 					.fillMaxWidth()
-					.height(spotlightHeight)
+					.height(shownSpotlightHeight)
 					.padding(start = LagoonDimens.ContentStart, top = 28.dp, bottom = 12.dp)
 			) {
 				if (header != null) Box(Modifier.align(Alignment.TopStart)) { header() }
 
 				Column(Modifier.align(Alignment.BottomStart)) {
-					SpotlightInfo(spotlightItem, isCompact = header != null)
+					SpotlightInfo(spotlightItem, isCompact = header != null || isShelfFocused)
 
 					if (featuredItem != null) {
 						BillboardControls(
@@ -144,6 +162,7 @@ fun ShelfBrowser(
 							featuredCount = featured.size,
 							featuredIndex = featuredIndex % featured.size,
 							isVisible = isBillboardFocused,
+							isCollapsed = isShelfFocused,
 							playRequester = playRequester,
 							onFocusChanged = { hasFocus ->
 								isBillboardFocused = hasFocus
@@ -160,7 +179,14 @@ fun ShelfBrowser(
 				LazyColumn(
 					state = shelvesState,
 					contentPadding = PaddingValues(bottom = 200.dp),
-					modifier = Modifier.fillMaxSize(),
+					modifier = Modifier
+						.fillMaxSize()
+						.onFocusChanged { isShelfFocused = it.hasFocus }
+						// The billboard buttons fold away while a shelf has focus, so Up from the top shelf is sent to them here
+						.focusProperties {
+							onExit = { if (requestedFocusDirection == FocusDirection.Up && hasFeatured) playRequester.requestFocus() }
+						}
+						.focusGroup(),
 				) {
 					itemsIndexed(shelves, key = { _, shelf -> shelf.key }) { shelfIndex, shelf ->
 						val restoreIndex = restoreFocus?.takeIf { it.shelfIndex == shelfIndex }?.itemIndex
@@ -188,16 +214,24 @@ private fun BillboardControls(
 	featuredCount: Int,
 	featuredIndex: Int,
 	isVisible: Boolean,
+	isCollapsed: Boolean,
 	playRequester: FocusRequester,
 	onFocusChanged: (Boolean) -> Unit,
 	actions: LagoonActions,
 ) {
-	// Kept composed while hidden so Up from the first shelf still has somewhere to land
+	// Kept composed while folded away so Up from the first shelf can still focus Play
 	val alpha by animateFloatAsState(if (isVisible) 1f else 0f, label = "BillboardControls")
+	val shownFraction by animateFloatAsState(if (isCollapsed) 0f else 1f, tween(SpotlightResizeMillis), label = "BillboardFold")
 	val isResumable = (featuredItem.userData?.playbackPositionTicks ?: 0L) > 0L
 
 	Column(
 		Modifier
+			// Clip only while folding, so the focused button can still grow past its row
+			.then(if (shownFraction < 1f) Modifier.clipToBounds() else Modifier)
+			.layout { measurable, constraints ->
+				val placeable = measurable.measure(constraints)
+				layout(placeable.width, (placeable.height * shownFraction).roundToInt()) { placeable.place(0, 0) }
+			}
 			.padding(top = 16.dp)
 			.graphicsLayer { this.alpha = alpha }
 	) {

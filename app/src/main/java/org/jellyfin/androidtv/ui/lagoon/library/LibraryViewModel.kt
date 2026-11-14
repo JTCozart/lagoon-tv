@@ -19,6 +19,7 @@ import org.jellyfin.sdk.api.client.exception.ApiClientException
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import timber.log.Timber
+import java.util.UUID
 
 class LibraryViewModel(
 	val library: BaseItemDto,
@@ -52,6 +53,14 @@ class LibraryViewModel(
 		if (_state.value.mode == mode) return
 		_state.update { it.copy(mode = mode) }
 		if (mode == LibraryMode.AllTitles && _state.value.titles.isEmpty()) reloadTitles()
+		if (mode == LibraryMode.AllTitles && _state.value.categories.isEmpty()) loadCategories()
+	}
+
+	/** Narrows All titles to one genre; null shows every title again. */
+	fun selectCategory(categoryId: UUID?) {
+		if (_state.value.selectedCategoryId == categoryId) return
+		_state.update { it.copy(selectedCategoryId = categoryId) }
+		reloadTitles()
 	}
 
 	fun cycleSort() {
@@ -82,7 +91,14 @@ class LibraryViewModel(
 			_state.update { it.copy(isLoadingTitles = true) }
 			val current = _state.value
 			val page = try {
-				loader.page(library, itemKind, current.sort, current.unwatchedOnly, startIndex = current.titles.size)
+				loader.page(
+					library = library,
+					itemKind = itemKind,
+					sort = current.sort,
+					unwatchedOnly = current.unwatchedOnly,
+					categoryId = current.selectedCategoryId,
+					startIndex = current.titles.size,
+				)
 			} catch (error: ApiClientException) {
 				Timber.w(error, "Library page failed to load library=%s", library.id)
 				null
@@ -92,6 +108,19 @@ class LibraryViewModel(
 				if (page == null) it.copy(isLoadingTitles = false)
 				else it.copy(titles = it.titles + page.items, totalTitles = page.totalCount, isLoadingTitles = false)
 			}
+		}
+	}
+
+	private fun loadCategories() {
+		viewModelScope.launch {
+			val categories = try {
+				loader.categories(library, itemKind)
+			} catch (error: ApiClientException) {
+				// Without categories the grid still works; it just cannot be narrowed
+				Timber.w(error, "Library categories failed to load library=%s", library.id)
+				emptyList()
+			}
+			_state.update { it.copy(categories = categories) }
 		}
 	}
 

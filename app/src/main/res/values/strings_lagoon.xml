@@ -62,4 +62,5 @@
     <string name="lagoon_update_downloading">Downloading %1$d%%</string>
     <string name="lagoon_update_failed">The update did not download correctly, so nothing was installed. Check the connection and try again.</string>
     <string name="lagoon_update_permission">Allow Lagoon to install apps on the screen that opened, or under Settings, Apps, Security and restrictions, then choose Update now again.</string>
+    <string name="lagoon_category_all">All</string>
 </resources>

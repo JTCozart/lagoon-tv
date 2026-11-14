@@ -29,8 +29,8 @@ engine, server support, sign-in and settings, and replaces the screens you use e
 
 - **Home:** a navigation rail, a rotating billboard with Play and More info, and rows for Continue watching, Next up
   and new arrivals that follow your Jellyfin home settings.
-- **Libraries:** a Browse view with top rated and genre rows, and an All titles poster wall with sorting and an
-  unwatched filter.
+- **Libraries:** a Browse view with top rated and genre rows, and an All titles poster wall with sorting, an
+  unwatched filter and a category list beside it that jumps straight to Comedy, Action or any other genre.
 - **Details:** artwork, logo, 4K, HDR and surround badges, cast, seasons and episodes, more like this, and a Play
   button that knows whether to resume or which episode is next.
 - **Search:** a remote-friendly keyboard and voice search, with the best match first and episodes below.

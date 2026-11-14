@@ -23,6 +23,7 @@ import org.jellyfin.sdk.model.api.ItemFilter
 import org.jellyfin.sdk.model.api.ItemSortBy
 import org.jellyfin.sdk.model.api.SortOrder
 import timber.log.Timber
+import java.util.UUID
 
 class JellyfinLibraryLoader(
 	private val context: Context,
@@ -54,6 +55,7 @@ class JellyfinLibraryLoader(
 		itemKind: BaseItemKind,
 		sort: LibrarySort,
 		unwatchedOnly: Boolean,
+		categoryId: UUID?,
 		startIndex: Int,
 	): LibraryPage = withContext(Dispatchers.IO) {
 		val result = api.itemsApi.getItems(
@@ -63,6 +65,7 @@ class JellyfinLibraryLoader(
 			sortBy = listOf(sort.sortBy, ItemSortBy.SORT_NAME),
 			sortOrder = listOf(sort.order, SortOrder.ASCENDING),
 			filters = if (unwatchedOnly) listOf(ItemFilter.IS_UNPLAYED) else null,
+			genreIds = categoryId?.let(::listOf),
 			fields = ItemRepository.browseFields,
 			startIndex = startIndex,
 			limit = PageSize,
@@ -120,13 +123,20 @@ class JellyfinLibraryLoader(
 		return Shelf("toprated", context.getString(R.string.lagoon_shelf_top_rated), ShelfCardStyle.Poster, items)
 	}
 
-	private suspend fun genreShelves(library: BaseItemDto, itemKind: BaseItemKind): List<Shelf> = coroutineScope {
-		val genres = api.genresApi.getGenres(
+	override suspend fun categories(library: BaseItemDto, itemKind: BaseItemKind): List<LibraryCategory> = withContext(Dispatchers.IO) {
+		LibraryCategories.from(genres(library, itemKind), itemKind)
+	}
+
+	private suspend fun genres(library: BaseItemDto, itemKind: BaseItemKind): List<BaseItemDto> =
+		api.genresApi.getGenres(
 			parentId = library.id,
 			includeItemTypes = listOf(itemKind),
 			fields = listOf(ItemFields.ITEM_COUNTS),
 			sortBy = listOf(ItemSortBy.SORT_NAME),
 		).content.items
+
+	private suspend fun genreShelves(library: BaseItemDto, itemKind: BaseItemKind): List<Shelf> = coroutineScope {
+		val genres = genres(library, itemKind)
 
 		// Some servers leave the counts empty; then fall back to the first genres by name
 		val chosen = GenreRanker.top(genres, itemKind, GenreShelfCount).ifEmpty { genres.take(GenreShelfCount) }

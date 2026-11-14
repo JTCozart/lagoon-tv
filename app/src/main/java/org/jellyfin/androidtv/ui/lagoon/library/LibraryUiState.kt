@@ -2,6 +2,7 @@ package org.jellyfin.androidtv.ui.lagoon.library
 
 import org.jellyfin.androidtv.ui.lagoon.browse.Shelf
 import org.jellyfin.sdk.model.api.BaseItemDto
+import java.util.UUID
 
 data class LibraryUiState(
 	val mode: LibraryMode = LibraryMode.Browse,
@@ -11,6 +12,8 @@ data class LibraryUiState(
 	val shelves: List<Shelf> = emptyList(),
 	val sort: LibrarySort = LibrarySort.RecentlyAdded,
 	val unwatchedOnly: Boolean = false,
+	val categories: List<LibraryCategory> = emptyList(),
+	val selectedCategoryId: UUID? = null,
 	val titles: List<BaseItemDto> = emptyList(),
 	val totalTitles: Int = 0,
 	val isLoadingTitles: Boolean = false,

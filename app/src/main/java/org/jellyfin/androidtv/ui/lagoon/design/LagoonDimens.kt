@@ -10,6 +10,7 @@ object LagoonDimens {
 	val RailExpandedWidth = 248.dp
 	val ContentStart = 36.dp
 	val SpotlightHeight = 296.dp
+	val CompactSpotlightHeight = 226.dp
 	val ShelfTitleGap = 10.dp
 
 	val LandscapeCardWidth = 236.dp

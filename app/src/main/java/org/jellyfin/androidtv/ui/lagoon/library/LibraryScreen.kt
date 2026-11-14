@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -51,8 +52,9 @@ import org.jellyfin.androidtv.ui.lagoon.design.PinFocusedChild
 import org.jellyfin.androidtv.ui.lagoon.design.RequestInitialFocus
 import org.jellyfin.sdk.model.api.BaseItemDto
 
-private const val GridColumns = 6
+private const val GridColumns = 5
 private val LibrarySpotlightHeight = 330.dp
+private val LibraryCompactSpotlightHeight = 238.dp
 
 @Composable
 fun LibraryScreen(
@@ -78,6 +80,7 @@ fun LibraryScreen(
 				focusMemory = viewModel,
 				actions = actions,
 				spotlightHeight = LibrarySpotlightHeight,
+				compactSpotlightHeight = LibraryCompactSpotlightHeight,
 				header = { LibraryHeader(viewModel.library, state, viewModel) },
 			)
 
@@ -140,7 +143,18 @@ private fun AllTitles(viewModel: LibraryViewModel, state: LibraryUiState, action
 	val restoreRequester = remember { FocusRequester() }
 	val firstRequester = remember { FocusRequester() }
 
-	BackHandler { viewModel.showMode(LibraryMode.Browse) }
+	// Back first widens a narrowed grid to every title, then returns to Browse
+	BackHandler {
+		if (state.selectedCategoryId != null) viewModel.selectCategory(null)
+		else viewModel.showMode(LibraryMode.Browse)
+	}
+
+	var shownCategoryId by remember { mutableStateOf(state.selectedCategoryId) }
+	LaunchedEffect(state.selectedCategoryId) {
+		if (shownCategoryId == state.selectedCategoryId) return@LaunchedEffect
+		shownCategoryId = state.selectedCategoryId
+		gridState.scrollToItem(0)
+	}
 
 	val hasTitles = state.titles.isNotEmpty()
 	val isFocusInsideContent = remember { mutableStateOf(false) }
@@ -161,41 +175,62 @@ private fun AllTitles(viewModel: LibraryViewModel, state: LibraryUiState, action
 			LibraryHeader(viewModel.library, state, viewModel)
 		}
 
-		if (!hasTitles && !state.isLoadingTitles) {
-			Text(
-				text = stringResource(R.string.lagoon_library_empty),
-				fontSize = 16.sp,
-				color = JellyfinTheme.colorScheme.listCaption,
-				modifier = Modifier.padding(start = LagoonDimens.ContentStart, top = 24.dp),
+		Row(Modifier.fillMaxSize()) {
+			CategoryList(
+				categories = state.categories,
+				selectedId = state.selectedCategoryId,
+				onSelect = viewModel::selectCategory,
+				modifier = Modifier.padding(start = LagoonDimens.ContentStart - 14.dp),
 			)
-			return@Column
-		}
 
-		PinFocusedChild(leadingEdge = 16.dp) {
-			LazyVerticalGrid(
-				columns = GridCells.Fixed(GridColumns),
-				state = gridState,
-				contentPadding = PaddingValues(start = LagoonDimens.ContentStart, end = LagoonDimens.ContentStart, top = 16.dp, bottom = 120.dp),
-				horizontalArrangement = Arrangement.spacedBy(LagoonDimens.CardGap),
-				verticalArrangement = Arrangement.spacedBy(20.dp),
-				modifier = Modifier
-					.fillMaxSize()
-					.focusRestorer()
-					.focusGroup(),
-			) {
-				itemsIndexed(state.titles, key = { _, item -> item.id }) { index, item ->
-					val requester = when {
-						index == restoreIndex -> Modifier.focusRequester(restoreRequester)
-						index == 0 -> Modifier.focusRequester(firstRequester)
-						else -> Modifier
-					}
-					TitleTile(
-						item = item,
-						onClick = { actions.openDetails(item) },
-						onFocused = { viewModel.onTitleFocused(index) },
-						cardModifier = requester,
-					)
+			if (!hasTitles && !state.isLoadingTitles) {
+				Text(
+					text = stringResource(R.string.lagoon_library_empty),
+					fontSize = 16.sp,
+					color = JellyfinTheme.colorScheme.listCaption,
+					modifier = Modifier.padding(start = 24.dp, top = 24.dp),
+				)
+			} else {
+				TitleGrid(viewModel, state, actions, gridState, restoreIndex, restoreRequester, firstRequester)
+			}
+		}
+	}
+}
+
+@Composable
+private fun TitleGrid(
+	viewModel: LibraryViewModel,
+	state: LibraryUiState,
+	actions: LagoonActions,
+	gridState: LazyGridState,
+	restoreIndex: Int?,
+	restoreRequester: FocusRequester,
+	firstRequester: FocusRequester,
+) {
+	PinFocusedChild(leadingEdge = 16.dp) {
+		LazyVerticalGrid(
+			columns = GridCells.Fixed(GridColumns),
+			state = gridState,
+			contentPadding = PaddingValues(start = 24.dp, end = LagoonDimens.ContentStart, top = 16.dp, bottom = 120.dp),
+			horizontalArrangement = Arrangement.spacedBy(LagoonDimens.CardGap),
+			verticalArrangement = Arrangement.spacedBy(20.dp),
+			modifier = Modifier
+				.fillMaxSize()
+				.focusRestorer()
+				.focusGroup(),
+		) {
+			itemsIndexed(state.titles, key = { _, item -> item.id }) { index, item ->
+				val requester = when {
+					index == restoreIndex -> Modifier.focusRequester(restoreRequester)
+					index == 0 -> Modifier.focusRequester(firstRequester)
+					else -> Modifier
 				}
+				TitleTile(
+					item = item,
+					onClick = { actions.openDetails(item) },
+					onFocused = { viewModel.onTitleFocused(index) },
+					cardModifier = requester,
+				)
 			}
 		}
 	}

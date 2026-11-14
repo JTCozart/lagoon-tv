@@ -73,3 +73,35 @@ class GenreRankerTests : FunSpec({
 		GenreRanker.top(listOf(empty, unknown), BaseItemKind.MOVIE, maximum = 5) shouldContainExactly emptyList()
 	}
 })
+
+class LibraryCategoriesTests : FunSpec({
+	test("Categories are the library's genres from A to Z") {
+		val categories = LibraryCategories.from(
+			listOf(genre("Western", movies = 3), genre("action", movies = 90), genre("Comedy", movies = 40)),
+			BaseItemKind.MOVIE,
+		)
+
+		categories.map { it.name } shouldContainExactly listOf("action", "Comedy", "Western")
+	}
+
+	test("Genres with nothing of this kind are left out") {
+		val categories = LibraryCategories.from(
+			listOf(genre("Anime", movies = 12, series = 0), genre("Drama", movies = 4, series = 9)),
+			BaseItemKind.SERIES,
+		)
+
+		categories.map { it.name } shouldContainExactly listOf("Drama")
+	}
+
+	test("When the server sends no counts at all, every named genre is offered") {
+		val categories = LibraryCategories.from(listOf(genre("Horror"), genre(""), genre("Family")), BaseItemKind.MOVIE)
+
+		categories.map { it.name } shouldContainExactly listOf("Family", "Horror")
+	}
+
+	test("A category keeps the genre's id so the grid can be filtered by it") {
+		val horror = genre("Horror", movies = 7)
+
+		LibraryCategories.from(listOf(horror), BaseItemKind.MOVIE).single().id shouldBe horror.id
+	}
+})
